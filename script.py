@@ -9,12 +9,13 @@ from webdriver_manager.chrome import ChromeDriverManager
 from time import sleep
 import pandas
 
-excel_data = pandas.read_excel('phones.xlsx', sheet_name='phones')
+LOCATION_FATA_FOLDER_PATH="/path/to/user_data_of_chrome"
 
+excel_data = pandas.read_excel('phones.xlsx', sheet_name='phones')
 count = 0
 options = webdriver.ChromeOptions()
 options.add_argument(
-    "user-data-dir=/Users/imanpirooz/repo/whatsapp-bulk-messages-without-saving-contacts/chrome_user_data")
+    f"user-data-dir={user_data_folder_path}")
 
 breakpoint()
 driver = webdriver.Chrome(options=options)
