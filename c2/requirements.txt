@@ -1,0 +1,8 @@
+fastapi==0.110.1
+pydantic==2.7.0
+pymongo==4.6.3
+python-dotenv
+starlette
+python-jose==3.3.0
+apscheduler
+minio

@@ -1,3 +1,8 @@
 chrome_user_data/
 venv/
 .env
+worker/__pycache__/
+c2/__pycache__/
+worker/user_data_extracted/
+worker/downloads/
+*.DS_Store

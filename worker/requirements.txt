@@ -1,0 +1,8 @@
+fastapi==0.110.1
+xlrd==2.0.1
+selenium==3.141.0
+webdriver-manager==3.4.2
+openpyxl==3.0.7
+uvicorn==0.29.0
+python-dotenv
+fake_useragent
