@@ -4,7 +4,6 @@ from typing import List
 from db import get_database
 from pydantic import BaseModel
 from motor.motor_asyncio import AsyncIOMotorDatabase
-from apscheduler.schedulers.background import BackgroundScheduler
 from minio import Minio
 from datetime import datetime
 from io import BytesIO
