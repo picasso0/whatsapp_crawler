@@ -1,4 +1,9 @@
 import itertools
+from db import get_database
+import motor.motor_asyncio
+
+client = motor.motor_asyncio.AsyncIOMotorClient("mongodb://77.238.108.86:27000/log?retryWrites=true&w=majority")
+db = client.gathering
 
 # Define the prefix for Israeli mobile numbers
 prefix = "9725"
@@ -15,15 +20,14 @@ phone_numbers = [prefix + combo for combo in combinations]
 
 # Print the generated phone numbers
 for number in phone_numbers:
-    print(number)
+    db.profile.insert_one({"mobile":number})
 
 
 
 # FOR IRAN
 
 # import random
-# from db import get_database
-# import motor.motor_asyncio
+
 
 
 
