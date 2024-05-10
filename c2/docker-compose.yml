@@ -9,3 +9,4 @@ services:
       - 8888:8888
     environment:
       - TOKEN=test
+      - WORKER_PORT=8000
