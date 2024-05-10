@@ -1,5 +1,4 @@
 import itertools
-from db import get_database
 import motor.motor_asyncio
 
 client = motor.motor_asyncio.AsyncIOMotorClient("mongodb://77.238.108.86:27000/log?retryWrites=true&w=majority")
@@ -17,7 +16,6 @@ combinations = [''.join(combo) for combo in itertools.product(digits, repeat=len
 
 # Combine the prefix and the remaining digits to form the complete phone numbers
 phone_numbers = [prefix + combo for combo in combinations]
-
 # Print the generated phone numbers
 for number in phone_numbers:
     db.profile.insert_one({"mobile":number})
