@@ -24,17 +24,17 @@ from time import sleep
 class Worker:
     def __init__(self):
         response = send_data_to_c2("POST", "initialize/", {})
-        # user_data_file = download_file(response.get("user_data_path"))
-        # if user_data_file == False:
-        #     return False
-        #     # raise HTTPException(status_code=400, detail="Cannot Download User Data File")
-        # else:
-        #     if is_zip_file(user_data_file) == False:
-        #         return False
-        #         # raise HTTPException(status_code=400, detail="Invalid zip file provided")
-        # extracted_files = extract_zip(user_data_file)
-        # remove_directory(user_data_file)
-        # self.id = response.get("worker_id")
+        user_data_file = download_file(response.get("user_data_path"))
+        if user_data_file == False:
+            return False
+            # raise HTTPException(status_code=400, detail="Cannot Download User Data File")
+        else:
+            if is_zip_file(user_data_file) == False:
+                return False
+                # raise HTTPException(status_code=400, detail="Invalid zip file provided")
+        extracted_files = extract_zip(user_data_file)
+        remove_directory(user_data_file)
+        self.id = response.get("worker_id")
         self.user_data_path = "user_data_extracted"
 
     def _get_driver(self):
