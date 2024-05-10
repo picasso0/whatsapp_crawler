@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Depends, Query, File, UploadFile
+from fastapi import FastAPI, Request, Depends, Query, File, UploadFile, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List
 from db import get_database
@@ -10,6 +10,8 @@ from io import BytesIO
 from utils import send_profiles_to_worker
 from json import dumps
 from time import sleep
+from dotenv import load_dotenv
+import os
 from fastapi.responses import JSONResponse
 from bson import ObjectId
 import asyncio
@@ -29,6 +31,7 @@ async def get_db_instance():
 
 app = FastAPI()
 
+load_dotenv()
 @app.on_event("startup")
 async def startup_event():
     asyncio.create_task(start())
@@ -92,7 +95,12 @@ class WhatsappResults(BaseModel):
     report: dict
 
 @app.post("/initialize/")
-async def initialize(request: Request, db: AsyncIOMotorDatabase = Depends(get_db_instance)):
+async def initialize(request: Request, db: AsyncIOMotorDatabase = Depends(get_db_instance), authorization: str = Header(None)):
+    correct_token = str(os.getenv("TOKEN"))
+    if authorization is None or authorization != correct_token:
+        raise HTTPException(status_code=401, detail="کاربر احراز هویت نشده است")
+
+    
     client_ip = request.client.host
     worker = await db.worker.find_one({"ip": client_ip})
     if not worker:
@@ -124,7 +132,12 @@ async def initialize(request: Request, db: AsyncIOMotorDatabase = Depends(get_db
     return return_data
 
 @app.post("/results/")
-async def recive_results(request: Request, results: WhatsappResults, db: AsyncIOMotorDatabase = Depends(get_db_instance)):
+async def recive_results(request: Request, results: WhatsappResults, db: AsyncIOMotorDatabase = Depends(get_db_instance), authorization: str = Header(None)):
+    
+    correct_token = str(os.getenv("TOKEN"))
+    if authorization is None or authorization != correct_token:
+        raise HTTPException(status_code=401, detail="کاربر احراز هویت نشده است")
+
     client_ip = request.client.host
     worker = await db.worker.find_one({"ip": client_ip})
     result_data = None

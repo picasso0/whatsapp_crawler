@@ -1,15 +1,15 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Header
 from typing import Dict, List
-from utils import extract_zip, download_file, is_zip_file, remove_directory, send_data_to_c2
 from pydantic import BaseModel
 from worker import Worker
 import asyncio
+from dotenv import load_dotenv
 import os
 
 
 worker = Worker()
 app = FastAPI()
-
+load_dotenv()
 
 class Initialize(BaseModel):
     worker_id: int
@@ -27,7 +27,12 @@ class Profiles(BaseModel):
 
 
 @app.post("/check_numbers/")
-async def profile(profiles: Profiles):
+async def check_numbers(profiles: Profiles, authorization: str = Header(None)):
+    
+    correct_token = str(os.getenv("TOKEN"))
+    if authorization is None or authorization != correct_token:
+        raise HTTPException(status_code=401, detail="کاربر احراز هویت نشده است")
+
     if worker.user_data_path == None or not os.path.exists(worker.user_data_path):
         return {"status": False}
     asyncio.create_task(worker.check_whatsapp_phones(
@@ -37,5 +42,5 @@ async def profile(profiles: Profiles):
 
 
 @app.get("/check_alive/")
-async def check_alive():
+async def check_alive(authorization: str = Header(None)):
     return {"status": True}
