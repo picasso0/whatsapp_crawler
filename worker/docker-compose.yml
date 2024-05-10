@@ -1,0 +1,11 @@
+version: '3'
+services:
+  worker:
+    container_name: worker
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
+    environment:
+      - TOKEN=test
