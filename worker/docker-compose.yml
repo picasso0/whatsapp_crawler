@@ -9,4 +9,4 @@ services:
       - 8000:8000
     environment:
       - TOKEN=test
-      - C2_URL=http://127.0.0.1:8888
+      - C2_URL=http://181.214.140.244:8888
