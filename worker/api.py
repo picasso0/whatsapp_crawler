@@ -8,6 +8,10 @@ import os
 
 
 worker = Worker()
+init_status=False
+while(init_status==False):
+    init_status=worker.initialize()
+    
 app = FastAPI()
 load_dotenv()
 
