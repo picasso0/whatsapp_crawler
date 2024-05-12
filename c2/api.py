@@ -11,6 +11,7 @@ from utils import send_profiles_to_worker
 from json import dumps
 from time import sleep
 from dotenv import load_dotenv
+import logging
 import os
 from fastapi.responses import JSONResponse
 from bson import ObjectId
@@ -105,25 +106,48 @@ async def initialize(request: Request, db: AsyncIOMotorDatabase = Depends(get_db
     worker = await db.worker.find_one({"ip": client_ip})
     if not worker:
         user_data = await db.user_data.find_one({"status": 0})
-        worker_data = {
-            "ip": client_ip,
-            "app_id": user_data.get("_id"),
-            "status": 0,
-            "reports": [],
-            "reports_count": 0
-        }
+        if user_data:
+            worker_data = {
+                "ip": client_ip,
+                "app_id": user_data.get("_id"),
+                "status": 0,
+                "reports": [],
+                "reports_count": 0
+            }
+        else:
+            worker_data = {
+                "ip": client_ip,
+                "app_id": 0,
+                "status": 2,
+                "reports": [],
+                "reports_count": 0
+            }
         worker = await db.worker.insert_one(worker_data)
         if not worker.acknowledged:
-            return {
-                "status": False
-            }
+            logging.error("cannot create worker ")
+            return JSONResponse(content={"status":False},status_code=500)
+        if not user_data:
+            logging.error(f"has not any unused user_data for {client_ip} worker")
+            return JSONResponse(content={"status":False},status_code=500)
         worker_id = worker.inserted_id
+        
     else:
         worker_id = worker.get("_id")
-        user_data = await db.user_data.find_one({"_id": worker.get("app_id")})
+        if worker.get("app_id")==0:
+            user_data = await db.user_data.find_one({"status": 0})
+            if not user_data:
+                logging.error(f"has not any unused user_data for {client_ip} worker")
+                return JSONResponse(content={"status":False},status_code=500)
+        else:
+            user_data = await db.user_data.find_one({"_id": worker.get("app_id"),"status":1})
+            if not user_data:
+                user_data = await db.user_data.find_one({"status": 0})
+                if not user_data:
+                    logging.error(f"has not any unused user_data for {client_ip} worker")
+                    return JSONResponse(content={"status":False},status_code=500)
         db.worker.update_one(
-                        {"_id": worker.get("app_id")},
-                        {"$set": {"status": 1}}
+                        {"_id": worker.get("_id")},
+                        {"$set": {"status": 0}}
                     )
     return_data = {
         "worker_id": str(worker_id),
