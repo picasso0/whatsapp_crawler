@@ -6,3 +6,4 @@ starlette
 python-jose==3.3.0
 apscheduler
 minio
+motor
