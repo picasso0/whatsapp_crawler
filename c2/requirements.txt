@@ -6,6 +6,7 @@ starlette
 python-jose==3.3.0
 apscheduler
 minio
+python-multipart
 motor
 uvicorn==0.29.0
 requests
