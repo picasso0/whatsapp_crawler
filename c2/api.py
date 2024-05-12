@@ -11,7 +11,6 @@ from utils import send_profiles_to_worker
 from json import dumps
 from time import sleep
 from dotenv import load_dotenv
-import logging
 import os
 from fastapi.responses import JSONResponse
 from bson import ObjectId
@@ -25,7 +24,17 @@ from auth import (
     oauth2_scheme,
     HTTPException
 )
-
+import logging
+import sys
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
+    handlers=[
+        logging.StreamHandler(sys.stdout),
+        logging.StreamHandler(sys.stderr)
+    ]
+)
+logging.info("start")
 async def get_db_instance():
     database = await get_database()
     return database

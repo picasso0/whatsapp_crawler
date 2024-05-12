@@ -20,12 +20,20 @@ from utils import extract_zip, download_file, is_zip_file, remove_directory, sen
 from json import dumps
 from time import sleep
 import logging
-
+import sys
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
+    handlers=[
+        logging.StreamHandler(sys.stdout),
+        logging.StreamHandler(sys.stderr)
+    ]
+)
+logging.info("start")
 
 class Worker:
     
     def initialize(self):
-        
             response = send_data_to_c2("POST", "initialize/", {})
             if response.status_code==500:
                 logging.error("error in c2 initialize ( check c2 logs )")
