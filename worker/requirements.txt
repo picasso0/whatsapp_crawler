@@ -6,3 +6,4 @@ openpyxl==3.0.7
 uvicorn==0.29.0
 python-dotenv
 fake_useragent
+requests
