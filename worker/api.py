@@ -11,9 +11,10 @@ from time import sleep
 app = FastAPI()
 load_dotenv()
 worker = Worker()
-init_status=False
-while(init_status==False):
+while(True):
     init_status=worker.initialize()
+    if init_status != True:
+        break
     sleep(60)
 worker.im_ready()
 
