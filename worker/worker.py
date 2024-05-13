@@ -67,29 +67,30 @@ class Worker:
         breakpoint()
         logging.info("Setup WebDriver...")
         # Create a UserAgent object
-        ua = UserAgent(platforms='pc', os='linux',
-                       min_version=120.0, browsers=["chrome"])
+        # ua = UserAgent(platforms='pc', os='linux',
+        #                min_version=120.0, browsers=["chrome"])
 
-        # Get the user agent string for the latest version of Chrome
-        chrome_user_agent = ua.random
+        # # Get the user agent string for the latest version of Chrome
+        # chrome_user_agent = ua.random
 
         browser_option = ChromeOptions()
 
         browser_option.add_argument('--headless')
-        browser_option.add_argument('--disable-dev-shm-usage')
-        browser_option.add_argument('--lang=en')
-        browser_option.add_experimental_option(
-            'prefs', {'intl.accept_languages': 'en,en_US'})
+        # browser_option.add_argument('--disable-dev-shm-usage')
+        # browser_option.add_argument('--lang=en')
+        # browser_option.add_experimental_option(
+        #     'prefs', {'intl.accept_languages': 'en,en_US'})
 
-        browser_option.add_argument(
-            f"user-data-dir={self.user_data_path}")
-        browser_option.add_argument(
-            "--user-agent={}".format(chrome_user_agent))
+        # browser_option.add_argument(
+        #     f"user-data-dir={self.user_data_path}")
+        # browser_option.add_argument(
+        #     "--user-agent={}".format(chrome_user_agent))
         # For Hiding Browser
 
         try:
             logging.info("Initializing ChromeDriver...")
             driver = webdriver.Chrome(
+                options=browser_option,
             )
 
             logging.info("WebDriver Setup Complete")
