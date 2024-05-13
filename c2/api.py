@@ -170,7 +170,7 @@ async def initialize(request: Request, db: AsyncIOMotorDatabase = Depends(get_db
     return JSONResponse(content=return_data,status_code=200)
 
 
-@app.post("/im_ready/")
+@app.get("/im_ready/")
 async def im_reade(request: Request, db: AsyncIOMotorDatabase = Depends(get_db_instance), authorization: str = Header(None)):
     correct_token = str(os.getenv("TOKEN"))
     if authorization is None or authorization != correct_token:
