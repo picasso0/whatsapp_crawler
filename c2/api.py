@@ -116,7 +116,7 @@ async def initialize(request: Request, db: AsyncIOMotorDatabase = Depends(get_db
     if authorization is None or authorization != correct_token:
         raise HTTPException(status_code=401, detail="کاربر احراز هویت نشده است")
     
-    client_ip = request.client.host
+    client_ip = request.header.get("worker_ip")
     worker = await db.worker.find_one({"ip": client_ip})
     if not worker:
         user_data = await db.user_data.find_one({"status": 0})
