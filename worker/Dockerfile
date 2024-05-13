@@ -10,15 +10,12 @@ RUN apt-get -y update
 RUN apt-get install -y google-chrome-stable
 
 # install chromedriver
-#RUN apt-get install -yqq unzip
-RUN wget -O /tmp/chromedriver.zip http://chromedriver.storage.googleapis.com/`curl -sS https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/121.0.6167.85/linux64/chromedriver-linux64.zip
+RUN apt-get install -yqq unzip
+RUN wget -O /tmp/chromedriver.zip http://chromedriver.storage.googleapis.com/`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE`/chromedriver_linux64.zip
 RUN unzip /tmp/chromedriver.zip chromedriver -d /usr/local/bin/
 
-
-# Install dependencies
-RUN    pip install --upgrade pip
-RUN    pip install stem selenium requests
-RUN    apt-get update
+# set display port to avoid crash
+ENV DISPLAY=:99
 
 COPY requirements.txt /
 RUN pip install -r /requirements.txt
