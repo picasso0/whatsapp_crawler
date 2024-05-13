@@ -64,7 +64,7 @@ class Worker:
          logging.info("im ready")
          
     def _get_driver(self):
-        print("Setup WebDriver...")
+        logging.info("Setup WebDriver...")
         # Create a UserAgent object
         ua = UserAgent(platforms='pc', os='linux',
                        min_version=120.0, browsers=["chrome"])
@@ -87,30 +87,30 @@ class Worker:
         # For Hiding Browser
 
         try:
-            print("Initializing ChromeDriver...")
+            logging.info("Initializing ChromeDriver...")
             driver = webdriver.Chrome(
                 options=browser_option,
             )
 
-            print("WebDriver Setup Complete")
+            logging.info("WebDriver Setup Complete")
             return driver
         except WebDriverException:
             try:
-                print("Downloading ChromeDriver...")
+                logging.info("Downloading ChromeDriver...")
                 chromedriver_path = ChromeDriverManager().install()
                 chrome_service = ChromeService(
                     executable_path=chromedriver_path)
 
-                print("Initializing ChromeDriver...")
+                logging.info("Initializing ChromeDriver...")
                 driver = webdriver.Chrome(
                     service=chrome_service,
                     options=browser_option,
                 )
 
-                print("WebDriver Setup Complete")
+                logging.info("WebDriver Setup Complete")
                 return driver
             except Exception as e:
-                print(f"Error setting up WebDriver: {e}")
+                logging.info(f"Error setting up WebDriver: {e}")
 
         pass
 
@@ -122,7 +122,7 @@ class Worker:
         driver.get('https://web.whatsapp.com')
         sleep(4)
         for phone in phones:
-            print(f"start {phone.mobile}")
+            logging.info(f"start {phone.mobile}")
             phone_result = {'mobile': phone.mobile,
                             'find': False, 'whatsapp': {}}
             url = 'https://web.whatsapp.com/send?phone={}'.format(
@@ -160,7 +160,7 @@ class Worker:
                 except:
                     pass
 
-            print(f"end {phone.mobile}")
+            logging.info(f"end {phone.mobile}")
             results.append(phone_result)
         driver.quit()
         end_datetime = datetime.now()
