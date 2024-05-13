@@ -42,6 +42,7 @@ class Worker:
             if response.status_code==401:
                 logging.error("unauth please check token")
                 return False
+            response=response.json()
             user_data_file = download_file(response.get("user_data_path"))
             
             if user_data_file == False:
