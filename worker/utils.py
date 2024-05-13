@@ -11,7 +11,7 @@ import json
 def download_file(url, directory="downloads"):
     response = requests.head(url, allow_redirects=True, verify=True)
 
-    if response.headers.get("Content-Type") == 'application/zip':
+    if response.headers.get("Content-Type") == 'application/zip' or response.headers.get('Content-Type') == 'application/octet-stream':
         response = requests.get(url, stream=True, allow_redirects=True, verify=True)
         if not os.path.exists(directory):
             os.makedirs(directory)
