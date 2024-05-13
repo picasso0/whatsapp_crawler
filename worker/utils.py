@@ -9,10 +9,10 @@ import json
 
 
 def download_file(url, directory="downloads"):
-    response = requests.head(url, allow_redirects=True, verify=False)
+    response = requests.head(url, allow_redirects=True, verify=True)
 
     if response.headers.get("Content-Type") == 'application/zip':
-        response = requests.get(url, stream=True, allow_redirects=True, verify=False)
+        response = requests.get(url, stream=True, allow_redirects=True, verify=True)
         if not os.path.exists(directory):
             os.makedirs(directory)
         filepath = os.path.join(directory, "chrome.zip")
