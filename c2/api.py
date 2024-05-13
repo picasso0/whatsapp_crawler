@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from minio import Minio
 from datetime import datetime
+from multiprocessing import Process
 from io import BytesIO
 from utils import send_profiles_to_worker
 from json import dumps
@@ -40,18 +41,23 @@ async def get_db_instance():
     return database
 
 app = FastAPI()
-
 load_dotenv()
 @app.on_event("startup")
 async def startup_event():
-    asyncio.create_task(start())
+    p = Process(target=run_async_function)
+    p.start()
 
+
+def run_async_function():
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(start())
 
 async def start():
     db = await get_db_instance()
     while(True):
         try:
-            print("start")
+            logging.info("start loop")
             workers = db.worker.find({"status": 0})
             profiles_data = []
             async for worker in workers:
@@ -81,7 +87,7 @@ async def start():
                     send_profiles_to_worker(worker['ip'], dumps(send_data))
         except:
             pass
-        print("end")
+        logging.info("end loop")
         sleep(1800)
 
 origins = ["*"]
