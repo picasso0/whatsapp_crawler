@@ -5,12 +5,14 @@ from worker import Worker
 import asyncio
 from dotenv import load_dotenv
 import os
+from time import sleep
 
 
 worker = Worker()
 init_status=False
 while(init_status==False):
     init_status=worker.initialize()
+    sleep(60)
     
 app = FastAPI()
 load_dotenv()
