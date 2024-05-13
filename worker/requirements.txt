@@ -1,6 +1,6 @@
 fastapi==0.110.1
 xlrd==2.0.1
-selenium==4.17.2
+selenium==3.8.0
 webdriver-manager==3.4.2
 openpyxl==3.0.7
 uvicorn==0.29.0
