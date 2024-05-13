@@ -8,14 +8,14 @@ import os
 from time import sleep
 
 
+app = FastAPI()
+load_dotenv()
 worker = Worker()
 init_status=False
 while(init_status==False):
     init_status=worker.initialize()
     sleep(60)
     
-app = FastAPI()
-load_dotenv()
 
 class Initialize(BaseModel):
     worker_id: int
