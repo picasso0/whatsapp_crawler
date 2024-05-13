@@ -90,7 +90,6 @@ class Worker:
         try:
             logging.info("Initializing ChromeDriver...")
             driver = webdriver.Chrome(
-                options=browser_option,
             )
 
             logging.info("WebDriver Setup Complete")
