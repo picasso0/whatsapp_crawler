@@ -64,6 +64,7 @@ class Worker:
          logging.info("im ready")
          
     def _get_driver(self):
+        breakpoint()
         logging.info("Setup WebDriver...")
         # Create a UserAgent object
         ua = UserAgent(platforms='pc', os='linux',
