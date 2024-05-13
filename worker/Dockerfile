@@ -3,26 +3,20 @@ RUN mkdir -p /app
 WORKDIR /app
 
 
-# Install necessary packages
-RUN apt-get update && apt-get install -y wget unzip
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends gnupg wget curl unzip && \
+    wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
+    echo "deb http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google.list && \
+    apt-get update -y && \
+    apt-get install -y --no-install-recommends google-chrome-stable && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /var/cache/apt/*
 
-# Install Google Chrome
-RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - && \
-    echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list && \
-    apt-get update && \
-    apt-get install -y google-chrome-stable
-
-# Determine the installed Chrome version
-ENV CHROME_VERSION=$(google-chrome --product-version | grep -o "[^\.]*\.[^\.]*\.[^\.]*")
-
-# Download and install the corresponding Chromedriver
-RUN CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION") && \
+# Download and install the latest stable Chromedriver
+RUN CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE") && \
     wget -q --continue -P /chromedriver "https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip" && \
-    unzip /chromedriver/chromedriver* -d /usr/local/bin/
-
-# Verify the versions match
-RUN google-chrome --version && \
-    chromedriver -v
+    unzip /chromedriver/chromedriver* -d /usr/local/bin/ && \
+    rm -rf /chromedriver
 
 
 COPY requirements.txt /
