@@ -15,7 +15,7 @@ init_status=False
 while(init_status==False):
     init_status=worker.initialize()
     sleep(60)
-    
+worker.im_ready()
 
 class Initialize(BaseModel):
     worker_id: int
