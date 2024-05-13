@@ -124,7 +124,7 @@ async def initialize(request: Request, db: AsyncIOMotorDatabase = Depends(get_db
             worker_data = {
                 "ip": client_ip,
                 "app_id": user_data.get("_id"),
-                "status": 0,
+                "status": 1,
                 "reports": [],
                 "reports_count": 0
             }
@@ -161,13 +161,29 @@ async def initialize(request: Request, db: AsyncIOMotorDatabase = Depends(get_db
                     return JSONResponse(content={"status":False},status_code=500)
         db.worker.update_one(
                         {"_id": worker.get("_id")},
-                        {"$set": {"status": 0}}
+                        {"$set": {"status": 1}}
                     )
     return_data = {
         "worker_id": str(worker_id),
         "user_data_path": user_data.get("path"),
     }
-    return return_data
+    return JSONResponse(content=return_data,status_code=200)
+
+
+@app.post("/im_ready/")
+async def im_reade(request: Request, db: AsyncIOMotorDatabase = Depends(get_db_instance), authorization: str = Header(None)):
+    correct_token = str(os.getenv("TOKEN"))
+    if authorization is None or authorization != correct_token:
+        raise HTTPException(status_code=401, detail="کاربر احراز هویت نشده است")
+    
+    client_ip = request.headers.get("worker_ip")
+    worker = await db.worker.find_one({"ip": client_ip})
+    db.worker.update_one(
+                        {"_id": worker.get("_id")},
+                        {"$set": {"status": 0}}
+                    )
+    return JSONResponse(content={"status":True},status_code=200)
+    
 
 @app.post("/results/")
 async def recive_results(request: Request, results: WhatsappResults, db: AsyncIOMotorDatabase = Depends(get_db_instance), authorization: str = Header(None)):
