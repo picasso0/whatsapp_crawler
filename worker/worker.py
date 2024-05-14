@@ -64,7 +64,6 @@ class Worker:
          logging.info("im ready")
          
     def _get_driver(self):
-        breakpoint()
         logging.info("Setup WebDriver...")
         # Create a UserAgent object
         ua = UserAgent(platforms='pc', os='linux',
@@ -167,10 +166,9 @@ class Worker:
                     pass
 
             logging.info(f"end {phone.mobile}")
-            breakpoint()
+
             results.append(phone_result)
         driver.quit()
-        breakpoint()
         end_datetime = datetime.now()
         report = {
             'id': report['id'],
