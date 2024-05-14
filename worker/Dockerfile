@@ -3,7 +3,7 @@ RUN mkdir -p /app
 WORKDIR /app
 
 
-RUN apt-get install -y wget xvfb unzip
+RUN apt-get install -y wget unzip
 # Set up the Chrome PPA -> (not sure if needed)
 RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
 RUN echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list
