@@ -281,7 +281,6 @@ def allowed_file(filename):
 async def upload_zip_file(request: Request, current_user: dict = Depends(get_current_user), db: AsyncIOMotorDatabase = Depends(get_db_instance), file: UploadFile = File(...)):
     if not allowed_file(file.filename):
         raise HTTPException(status_code=400, detail="Only zip files are allowed.")
-    breakpoint()
     minio_client = Minio(
     "minio.sirafgroup.com",
     access_key="7qMlPjxSnrQ6fKGCPpl3",
