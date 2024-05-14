@@ -26,7 +26,7 @@ RUN CHROMEDRIVER_URL=$(jq -r '.channels.Stable.downloads.chromedriver[] | select
     wget -q --continue -O /tmp/chromedriver-linux64.zip $CHROMEDRIVER_URL && \
     unzip /tmp/chromedriver-linux64.zip -d /opt/chromedriver && \
     chmod +x /opt/chromedriver/chromedriver-linux64/chromedriver && \
-    cp /opt/chromedriver /usr/bin/chromedriver
+    cp /opt/chromedriver/chromedriver-linux64/chromedriver /usr/bin/chromedriver
 
 # Set up Chromedriver Environment variables
 ENV CHROMEDRIVER_DIR /opt/chromedriver
