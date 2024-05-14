@@ -192,7 +192,7 @@ async def recive_results(request: Request, results: WhatsappResults, db: AsyncIO
     if authorization is None or authorization != correct_token:
         raise HTTPException(status_code=401, detail="کاربر احراز هویت نشده است")
 
-    client_ip = request.client.host
+    client_ip = request.headers.get("worker_ip")
     worker = await db.worker.find_one({"ip": client_ip})
     result_data = None
     for result in results.results:
