@@ -7,6 +7,10 @@ services:
       dockerfile: Dockerfile
     ports:
       - 8888:8888
+    volumes:
+      - ./:/app
     environment:
       - TOKEN=test
       - WORKER_PORT=8000
+
+      

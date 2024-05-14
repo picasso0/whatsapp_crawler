@@ -7,6 +7,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - 8000:8000
+    volumes:
+      - ./:/app
     environment:
       - TOKEN=test
       - C2_URL=http://181.214.140.244:8888
