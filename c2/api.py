@@ -277,7 +277,7 @@ async def get_records(request: Request, current_user: dict = Depends(get_current
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() == 'zip'
-@app.post("/upload_userdata")
+@app.post("/upload_userdata/")
 async def upload_zip_file(request: Request, current_user: dict = Depends(get_current_user), db: AsyncIOMotorDatabase = Depends(get_db_instance), file: UploadFile = File(...)):
     if not allowed_file(file.filename):
         raise HTTPException(status_code=400, detail="Only zip files are allowed.")
