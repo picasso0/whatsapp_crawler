@@ -73,12 +73,6 @@ class Worker:
         chrome_user_agent = ua.random
 
         browser_option = ChromeOptions()
-        browser_option.add_argument("--no-sandbox")
-        browser_option.add_argument("--ignore-certificate-errors")
-        browser_option.add_argument("--disable-gpu")
-        browser_option.add_argument("--log-level=3")
-        browser_option.add_argument("--disable-notifications")
-        browser_option.add_argument("--disable-popup-blocking")
         browser_option.add_argument('--headless')
         browser_option.add_argument('--disable-dev-shm-usage')
         browser_option.add_argument('--lang=en')
@@ -166,9 +160,10 @@ class Worker:
                     pass
 
             logging.info(f"end {phone.mobile}")
-
+            breakpoint()
             results.append(phone_result)
         driver.quit()
+        breakpoint()
         end_datetime = datetime.now()
         report = {
             'id': report['id'],
