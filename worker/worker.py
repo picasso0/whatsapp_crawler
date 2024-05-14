@@ -125,8 +125,9 @@ class Worker:
         results = []
         driver = self._get_driver()
         driver.get('https://web.whatsapp.com')
-        sleep(4)
+        sleep(10)
         for phone in phones:
+            breakpoint()
             logging.info(f"start {phone.mobile}")
             phone_result = {'mobile': phone.mobile,
                             'find': False, 'whatsapp': {}}
@@ -135,11 +136,11 @@ class Worker:
             sent = False
             driver.get(url)
             try:
-                element = WebDriverWait(driver, 5).until(
+                element = WebDriverWait(driver, 10).until(
                     EC.presence_of_element_located((By.XPATH, '//div[@class="x12lqup9 x1o1kx08" and contains(., "Phone number shared via url is invalid")]')))
             except:
                 try:
-                    element = WebDriverWait(driver, 5).until(
+                    element = WebDriverWait(driver, 10).until(
                         EC.presence_of_element_located((By.CSS_SELECTOR, "header._amid")))
                     try:
                         profile_image_element=""
@@ -166,7 +167,6 @@ class Worker:
                     pass
 
             logging.info(f"end {phone.mobile}")
-            breakpoint()
             results.append(phone_result)
         driver.quit()
         breakpoint()
