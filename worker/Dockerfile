@@ -25,7 +25,8 @@ RUN chmod +x /opt/chrome/chrome-linux64/chrome
 RUN CHROMEDRIVER_URL=$(jq -r '.channels.Stable.downloads.chromedriver[] | select(.platform=="linux64") | .url' /tmp/versions.json) && \
     wget -q --continue -O /tmp/chromedriver-linux64.zip $CHROMEDRIVER_URL && \
     unzip /tmp/chromedriver-linux64.zip -d /opt/chromedriver && \
-    chmod +x /opt/chromedriver/chromedriver-linux64/chromedriver
+    chmod +x /opt/chromedriver/chromedriver-linux64/chromedriver && \
+    cp /opt/chromedriver /usr/bin/chromedriver
 
 # Set up Chromedriver Environment variables
 ENV CHROMEDRIVER_DIR /opt/chromedriver
@@ -36,6 +37,7 @@ RUN rm /tmp/chrome-linux64.zip /tmp/chromedriver-linux64.zip /tmp/versions.json
 
 # Put Chromedriver into the PATH
 ENV PATH $CHROMEDRIVER_DIR:$PATH
+
 COPY requirements.txt /
 RUN pip install -r /requirements.txt
 
