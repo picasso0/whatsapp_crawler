@@ -167,8 +167,10 @@ class Worker:
                     pass
 
             logging.info(f"end {phone.mobile}")
+            breakpoint()
             results.append(phone_result)
         driver.quit()
+        breakpoint()
         end_datetime = datetime.now()
         report = {
             'id': report['id'],
