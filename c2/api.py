@@ -76,7 +76,7 @@ async def start():
                         start_id = str(profile['_id'])
                     profiles_data.append(
                         {"id": str(profile['_id']), 'mobile': profile['mobile']})
-                    db.profile.update_one({'mobile': profile['mobile']}, {"whatsapp_searching": 1})
+                    db.profile.update_one({'mobile': profile['mobile']},{"$set": {"whatsapp_searching": 1}})
                     i = i+1
                 if len(profiles_data) > 1:
                     db.worker.update_one(
