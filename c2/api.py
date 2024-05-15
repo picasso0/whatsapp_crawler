@@ -51,11 +51,13 @@ def run_async_function():
 
 async def start():
     db = await get_db_instance()
+    breakpoint()
     async for worker in db.worker.find({}):
         try:
             response=send_data_to_worker(worker['ip'], "GET", "check_alive", "")
             if response.status_code!=200:
                 raise Exception("worker is down")
+            db.worker.update_one({'ip': worker['ip']}, {"status": 0})
         except:
             logging.warning(f"worker {worker['ip']} is down")
             db.worker.update_one({'ip': worker['ip']}, {"status": 3})
