@@ -51,7 +51,6 @@ def run_async_function():
     loop.run_until_complete(start())
 
 async def start():
-    breakpoint()
     db = await get_db_instance()
     async for worker in db.worker.find({}):
         try:
