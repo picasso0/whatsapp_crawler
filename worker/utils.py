@@ -25,8 +25,7 @@ def download_file(url, directory="downloads"):
         return False
 
 
-def extract_zip(zip_file_path: str):
-    extracted_folder = "user_data_extracted"
+def extract_zip(zip_file_path: str, extracted_folder):
     if not os.path.exists(extracted_folder):
         os.makedirs(extracted_folder)
     with zipfile.ZipFile(zip_file_path, "r") as zip_ref:

