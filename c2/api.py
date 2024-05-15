@@ -235,11 +235,14 @@ async def dashboard(request: Request, current_user: dict = Depends(get_current_u
     return {"workers": workers_count ,"user_data": user_data_count, "profiles": profiles_count,"whatsapp_profiles":finded_whatsapp_profiles}
 
 @app.get("/profiles")
-async def get_records(request: Request, current_user: dict = Depends(get_current_user), db: AsyncIOMotorDatabase = Depends(get_db_instance), page: int = Query(1, ge=1), limit: int = Query(10, ge=1, le=100)):
+async def get_records(request: Request, find: bool = Query(True) , current_user: dict = Depends(get_current_user), db: AsyncIOMotorDatabase = Depends(get_db_instance), page: int = Query(1, ge=1), limit: int = Query(10, ge=1, le=100)):
     total_count = await db.profile.count_documents({})
+    filter={}
+    if find==True:
+        filter["whatsapp"]= {"$elemMatch": {"find": True}}
     skip = (page - 1) * limit
     records = []
-    async for record in db.profile.find({}).skip(skip).limit(limit):
+    async for record in db.profile.find(filter).skip(skip).limit(limit):
         record["_id"] = str(record["_id"])
         records.append(record)
     return {"total_count": total_count,"data": records}
