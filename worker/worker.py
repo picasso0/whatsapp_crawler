@@ -31,28 +31,32 @@ class Worker:
     
     def initialize(self):
             logging.info("start initialize")
-            response = send_data_to_c2("POST", "initialize/", {})
-            if response.status_code==500:
-                logging.error("error in c2 initialize ( check c2 logs )")
-                return False
-            if response.status_code==401:
-                logging.error("unauth please check token")
-                return False
-            response=response.json()
-            user_data_file = download_file(response.get("user_data_path"))
-            
-            if user_data_file == False:
-                logging.error("c2 dont sended any user data")
-                return False
-            else:
-                if is_zip_file(user_data_file) == False:
+            try:
+                response = send_data_to_c2("POST", "initialize/", {})
+                if response.status_code==500:
+                    logging.error("error in c2 initialize ( check c2 logs )")
+                    return False
+                if response.status_code==401:
+                    logging.error("unauth please check token")
+                    return False
+                response=response.json()
+                user_data_file = download_file(response.get("user_data_path"))
+                
+                if user_data_file == False:
                     logging.error("c2 dont sended any user data")
                     return False
-                
-            extracted_files = extract_zip(user_data_file)
-            remove_directory(user_data_file)
-            self.id = response.get("worker_id")
-            self.user_data_path = "user_data_extracted"
+                else:
+                    if is_zip_file(user_data_file) == False:
+                        logging.error("c2 dont sended any user data")
+                        return False
+                    
+                extracted_files = extract_zip(user_data_file)
+                remove_directory(user_data_file)
+                self.id = response.get("worker_id")
+                self.user_data_path = "user_data_extracted"
+            except Exception as e:
+                logging.error("faild  to connection with c2")
+                return False
             logging.info("end initialize")
 
     def im_ready(self):
