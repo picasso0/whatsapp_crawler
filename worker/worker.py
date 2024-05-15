@@ -56,10 +56,10 @@ class Worker:
                         logging.error("c2 dont sended any user data")
                         return False
                     
-                extracted_files = extract_zip(user_data_file)
+                extracted_files = extract_zip(user_data_file, extracted_folder)
                 remove_directory(download_directory)
                 self.id = response.get("worker_id")
-                self.user_data_path = "user_data_extracted"
+                self.user_data_path = extracted_folder
             except Exception as e:
                 logging.error("faild  to connection with c2")
                 return False
