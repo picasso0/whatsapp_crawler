@@ -30,10 +30,6 @@ import sys
 logging.basicConfig(
     level=logging.DEBUG,
     format='%(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
-    handlers=[
-        logging.StreamHandler(sys.stdout),
-        logging.StreamHandler(sys.stderr)
-    ]
 )
 logging.info("start")
 async def get_db_instance():
@@ -59,9 +55,9 @@ async def start():
         try:
             response=send_data_to_worker(worker['ip'], "GET", "check_alive", "")
             if response.status_code!=200:
-                logging.warning(f"worker {worker['ip']} is down")
                 raise Exception("worker is down")
         except:
+            logging.warning(f"worker {worker['ip']} is down")
             db.worker.update_one({'ip': worker['ip']}, {"status": 3})
 
     while(True):
