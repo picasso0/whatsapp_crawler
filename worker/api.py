@@ -42,9 +42,9 @@ async def check_numbers(profiles: Profiles, authorization: str = Header(None)):
 
     if worker.user_data_path == None or not os.path.exists(worker.user_data_path):
         return {"status": False}
-    # asyncio.create_task(worker.check_whatsapp_phones(
-    #     phones=profiles.phone_numbers, report=profiles.report))
-    await worker.check_whatsapp_phones(phones=profiles.phone_numbers,report=profiles.report)
+    asyncio.create_task(worker.check_whatsapp_phones(
+        phones=profiles.phone_numbers, report=profiles.report))
+    # await worker.check_whatsapp_phones(phones=profiles.phone_numbers,report=profiles.report)
     return {"status": True}
 
 
