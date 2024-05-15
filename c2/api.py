@@ -52,16 +52,17 @@ def run_async_function():
 
 async def start():
     db = await get_db_instance()
-    # async for worker in db.worker.find({}):
-    #     try:
-    #         response=send_data_to_worker(worker['ip'], "GET", "check_alive", "")
-    #         if response.status_code!=200:
-    #             raise Exception("worker is down")
-    #         db.worker.update_one({'ip': worker['ip']}, {"status": 0})
-    #     except:
-    #         logging.warning(f"worker {worker['ip']} is down")
-    #         db.worker.update_one({'ip': worker['ip']}, {"status": 3})
-
+    async for worker in db.worker.find({}):
+        try:
+            
+            response = send_data_to_worker(worker['ip'], "GET", "check_alive", "")
+            if response.status_code != 200:
+                raise Exception("Worker is down")
+            db.worker.update_one({'ip': worker['ip']}, {"$set": {"status": 0}})
+        except Exception as e:
+            logging.warning(f"Worker {worker['ip']} is down: {str(e)}")
+            db.worker.update_one({'ip': worker['ip']}, {"$set": {"status": 3}})
+            
     while(True):
         try:
             logging.info("start loop")
