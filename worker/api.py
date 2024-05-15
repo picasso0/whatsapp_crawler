@@ -13,7 +13,7 @@ load_dotenv()
 worker = Worker()
 while(True):
     init_status=worker.initialize()
-    if init_status != True:
+    if init_status != False:
         break
     sleep(60)
 worker.im_ready()
