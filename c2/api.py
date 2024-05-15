@@ -51,9 +51,8 @@ def run_async_function():
     loop.run_until_complete(start())
 
 async def start():
-    logging.info("start start")
-    db = await get_db_instance()
     breakpoint()
+    db = await get_db_instance()
     async for worker in db.worker.find({}):
         try:
             response=send_data_to_worker(worker['ip'], "GET", "check_alive", "")
