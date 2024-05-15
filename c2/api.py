@@ -8,7 +8,7 @@ from minio import Minio
 from datetime import datetime
 from multiprocessing import Process
 from io import BytesIO
-from utils import send_profiles_to_worker
+from utils import send_data_to_worker
 from json import dumps
 from time import sleep
 from dotenv import load_dotenv
@@ -55,6 +55,15 @@ def run_async_function():
 
 async def start():
     db = await get_db_instance()
+    async for worker in db.worker.find({}):
+        try:
+            response=send_data_to_worker(worker['ip'], "GET", "check_alive", dumps(send_data))
+            if response.status_code!=200:
+                logging.warning(f"worker {worker['ip']} is down")
+                raise Exception("worker is down")
+        except:
+            db.worker.update_one({'ip': worker['ip']}, {"status": 3})
+
     while(True):
         try:
             logging.info("start loop")
@@ -85,7 +94,7 @@ async def start():
                             'find_count': None
                         }
                     }
-                    send_profiles_to_worker(worker['ip'], dumps(send_data))
+                    send_data_to_worker(worker['ip'], "POST", "check_numbers", dumps(send_data))
         except:
             pass
         logging.info("end loop")
