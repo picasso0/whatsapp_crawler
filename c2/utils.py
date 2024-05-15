@@ -1,14 +1,18 @@
 from dotenv import load_dotenv
-from requests import post
+from requests import post, get
 from os import getenv
 
 
 
-def send_profiles_to_worker(worker_ip, profiles_json):
+def send_data_to_worker(worker_ip, method, endpoint, data):
     load_dotenv()
     worker_port = int(getenv("WORKER_PORT"))
     token = str(getenv("TOKEN"))
     headers = {"Content-Type": "application/json", "authorization": token}
-    response = post(
-        f"http://{worker_ip}:{worker_port}/check_numbers/", data=profiles_json, headers=headers)
-    return response.json()
+    if method=="POST":
+        response = post(
+            f"http://{worker_ip}:{worker_port}/{endpoint}/", data=data, headers=headers)
+    if method=="GET":
+        response = get(
+            f"http://{worker_ip}:{worker_port}/{endpoint}/", params=data, headers=headers)
+    return response
