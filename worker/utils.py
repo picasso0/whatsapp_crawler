@@ -59,15 +59,18 @@ def remove_directory(directory):
 
 
 def send_data_to_c2(method, endpoint, data):
-    load_dotenv()
-    c2_url = str(os.getenv("C2_URL"))
-    token = str(os.getenv("TOKEN"))
-    worker_ip = str(os.getenv("WORKER_IP"))
-    headers = {"Content-Type": "application/json", "authorization": token, "worker_ip": worker_ip}
-    if method == "POST":
-        response = requests.post(
-            f"{c2_url}/{endpoint}", data=data, headers=headers)
-    elif method == "GET":
-        response = requests.get(
-            f"{c2_url}/{endpoint}", params=data, headers=headers)
-    return response
+    try:
+        load_dotenv()
+        c2_url = str(os.getenv("C2_URL"))
+        token = str(os.getenv("TOKEN"))
+        worker_ip = str(os.getenv("WORKER_IP"))
+        headers = {"Content-Type": "application/json", "authorization": token, "worker_ip": worker_ip}
+        if method == "POST":
+            response = requests.post(
+                f"{c2_url}/{endpoint}", data=data, headers=headers)
+        elif method == "GET":
+            response = requests.get(
+                f"{c2_url}/{endpoint}", params=data, headers=headers)
+        return response
+    except:
+        return False
