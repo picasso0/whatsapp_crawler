@@ -32,6 +32,7 @@ logging.basicConfig(
     format='%(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
 )
 logging.info("start")
+
 async def get_db_instance():
     database = await get_database()
     return database
@@ -50,6 +51,7 @@ def run_async_function():
     loop.run_until_complete(start())
 
 async def start():
+    logging.info("start start")
     db = await get_db_instance()
     breakpoint()
     async for worker in db.worker.find({}):
