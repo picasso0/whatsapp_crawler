@@ -18,7 +18,7 @@ combinations = [''.join(combo) for combo in itertools.product(digits, repeat=len
 phone_numbers = [prefix + combo for combo in combinations]
 # Print the generated phone numbers
 for number in phone_numbers:
-    db.profile.insert_one({"mobile":number})
+    db.profile.insert_one({"mobile":number,"whatsapp_searching":0})
 
 
 

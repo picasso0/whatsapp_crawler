@@ -61,13 +61,14 @@ async def start():
             workers = db.worker.find({"status": 0})
             profiles_data = []
             async for worker in workers:
-                profiles = db.profile.find().sort("whatsapp_searches", 1).limit(500)
+                profiles = db.profile.find({"whatsapp_searching": 0}).sort("whatsapp_searches", 1).limit(500)
                 i = 0
                 async for profile in profiles:
                     if i == 0:
                         start_id = str(profile['_id'])
                     profiles_data.append(
                         {"id": str(profile['_id']), 'mobile': profile['mobile']})
+                    db.profile.update_one({'mobile': profile['mobile']}, {"whatsapp_searching": 1})
                     i = i+1
                 if len(profiles_data) > 1:
                     db.worker.update_one(
