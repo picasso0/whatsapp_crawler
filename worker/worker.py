@@ -32,7 +32,6 @@ class Worker:
     def initialize(self):
             logging.info("start initialize")
             try:
-                breakpoint()
                 extracted_folder = "user_data_extracted"
                 download_directory="downloads";
                 remove_directory(download_directory)
