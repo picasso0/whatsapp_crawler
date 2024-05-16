@@ -216,7 +216,7 @@ async def recive_results(request: Request, results: WhatsappResults, db: AsyncIO
                 {'mobile': result.mobile, "whatsapp_searches": 0})
         filter_query = {'mobile': result.mobile}
         update_operation = {
-            '$push': {'whatsapp': result_data,"whatsapp_searching": 1}, "$inc": {"whatsapp_searches": 1}}
+            '$push': {'whatsapp': result_data,"whatsapp_searching": 0}, "$inc": {"whatsapp_searches": 1}}
         db.profile.update_one(filter_query, update_operation)
     db.worker.update_one(
         {"_id": worker["_id"]},
