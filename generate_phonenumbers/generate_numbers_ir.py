@@ -4,21 +4,17 @@ import motor.motor_asyncio
 client = motor.motor_asyncio.AsyncIOMotorClient("mongodb://77.238.108.86:27000/log?retryWrites=true&w=majority")
 db = client.gathering
 
-def generate_israeli_mobile_numbers(prefix, length):
-    digits = [str(i) for i in range(10)]
-    
-    for combo in itertools.product(digits, repeat=length):
-        number = prefix + ''.join(combo)
-        yield number
-
 # Define the prefix for Israeli mobile numbers
 prefix = "9725"
 # Define the length of the remaining digits
 length = 8
 
 # Generate and print all Israeli mobile phone numbers
-for mobile_number in generate_israeli_mobile_numbers(prefix, length):
-    db.profile.insert_one({"mobile":mobile_number,"whatsapp_searching":0})
+digits = [str(i) for i in range(10)]
+    
+for combo in itertools.product(digits, repeat=length):
+    number = prefix + ''.join(combo)
+    db.profile.insert_one({"mobile":number,"whatsapp_searching":0})
     
 
 
