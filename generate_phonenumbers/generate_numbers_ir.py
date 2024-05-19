@@ -2,7 +2,6 @@ import itertools
 import motor.motor_asyncio
 import asyncio
 
-
 async def generate_and_insert_numbers(prefix, length, db):
     digits = [str(i) for i in range(10)]
     
@@ -12,7 +11,7 @@ async def generate_and_insert_numbers(prefix, length, db):
 
 async def main():
     client = motor.motor_asyncio.AsyncIOMotorClient("mongodb://77.238.108.86:27000/log?retryWrites=true&w=majority")
-    db = client.gathering
+    db = client["gathering"]
     prefix = "9725"
     length = 8
 
@@ -20,7 +19,6 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-
 
 # FOR IRAN
 
