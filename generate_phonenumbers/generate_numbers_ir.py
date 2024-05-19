@@ -1,8 +1,6 @@
 import itertools
 import motor.motor_asyncio
 import asyncio
-import itertools
-import motor.motor_asyncio
 
 
 async def generate_and_insert_numbers(prefix, length, db):
