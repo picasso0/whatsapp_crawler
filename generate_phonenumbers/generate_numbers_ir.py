@@ -1,12 +1,22 @@
-import itertools
 import motor.motor_asyncio
 import asyncio
 
-async def generate_and_insert_numbers(prefix, length, db):
+async def generate_numbers(prefix, length):
     digits = [str(i) for i in range(10)]
     
-    async for combo in itertools.product(digits, repeat=length):
-        number = prefix + ''.join(combo)
+    async def generate_combinations(current_combo=""):
+        if len(current_combo) == length:
+            yield prefix + current_combo
+        else:
+            for digit in digits:
+                async for number in generate_combinations(current_combo + digit):
+                    yield number
+    
+    async for number in generate_combinations():
+        yield number
+
+async def insert_numbers(numbers, db):
+    async for number in numbers:
         await db.profile.insert_one({"mobile": number, "whatsapp_searching": 0})
 
 async def main():
@@ -15,7 +25,8 @@ async def main():
     prefix = "9725"
     length = 8
 
-    await generate_and_insert_numbers(prefix, length, db)
+    numbers = generate_numbers(prefix, length)
+    await insert_numbers(numbers, db)
 
 if __name__ == "__main__":
     asyncio.run(main())
