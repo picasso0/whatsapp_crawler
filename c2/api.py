@@ -172,6 +172,10 @@ async def initialize(request: Request, db: AsyncIOMotorDatabase = Depends(get_db
                         {"_id": worker.get("_id")},
                         {"$set": {"status": 1}}
                     )
+    db.user_data.update_one(
+                        {"_id": user_data.get("_id")},
+                        {"$set": {"status": 1}}
+                    )
     return_data = {
         "worker_id": str(worker_id),
         "user_data_path": user_data.get("path"),

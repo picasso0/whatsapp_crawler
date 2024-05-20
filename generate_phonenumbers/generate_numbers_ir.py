@@ -17,7 +17,10 @@ async def generate_numbers(prefix, length):
 
 async def insert_numbers(numbers, db):
     async for number in numbers:
-        await db.profile.insert_one({"mobile": number, "whatsapp_searching": 0})
+        # Check if the document exists
+        existing_document = db.profile.find_one({"mobile": number})
+        if not existing_document:
+            await db.profile.insert_one({"mobile": number, "whatsapp_searching": 0})
 
 async def main():
     client = motor.motor_asyncio.AsyncIOMotorClient("mongodb://77.238.108.86:27000/log?retryWrites=true&w=majority")
