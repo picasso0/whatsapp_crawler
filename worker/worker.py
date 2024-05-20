@@ -167,6 +167,7 @@ class Worker:
                         'image': profile_image_element
                     }
                     find_count = find_count+1
+                    logging.info(f"_________________FINDED {phone.mobile}________________________")
                 except:
                     pass
 
