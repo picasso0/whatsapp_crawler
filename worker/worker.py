@@ -137,17 +137,11 @@ class Worker:
         url = 'https://web.whatsapp.com/send?phone={}'.format(
             phone.mobile)
         sent = False
-        driver.set_page_load_timeout(10)
         try:
             driver.get(url)
-            logger.warning(f"driver.get(url) to {url} ")
         except TimeoutException:
-            try:
-                sleep(3)
-                driver.get(url)
-            except TimeoutException:
-                logger.error(f"driver.get(url) to {url} failed")
-                return 0
+            logger.error(f"driver.get(url) to {url} failed")
+            return 0
         try:
             element = WebDriverWait(driver, 5).until(
                 EC.presence_of_element_located((By.XPATH, '//div[@class="x12lqup9 x1o1kx08" and contains(., "Phone number shared via url is invalid")]')))
@@ -196,7 +190,7 @@ class Worker:
         for index_number, phone in enumerate(phones):
             logger.info(f"start {phone.mobile}")
             phone_result = await self.check_whatsapp_phone(driver=driver,phone=phone)
-            if phone_result==0:
+            if phone_result == 0:
                 failed_numbers=phones[index_number:]
             logger.info(f"end {phone.mobile}")
             
