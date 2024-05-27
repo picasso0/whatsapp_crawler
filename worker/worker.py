@@ -137,12 +137,11 @@ class Worker:
         driver = self._get_driver()
         driver.get('https://web.whatsapp.com')
         try:
-            "//h1[@aria-label='Chats']"
             element = WebDriverWait(driver, 20).until(
-                    EC.presence_of_element_located((By.XPATH, "//h1[@aria-label='Chats']")))
+                    EC.presence_of_element_located((By.XPATH, "//h1[@class='x1qlqyl8 x1pd3egz xcgk4ki' and @aria-label='Chats']")))
         except:
             return send_data_to_c2("GET", "send_status/", "status=2")
-        logger.info(f"logged in to whataspp")
+        logger.info(f"logged in to whatsapp")
         for phone in phones:
             logger.info(f"start {phone.mobile}")
             phone_result = {'mobile': phone.mobile,
