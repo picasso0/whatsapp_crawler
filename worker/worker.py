@@ -192,6 +192,7 @@ class Worker:
             phone_result = await self.check_whatsapp_phone(driver=driver,phone=phone)
             if phone_result == 0:
                 failed_numbers=phones[index_number:]
+                break
             logger.info(f"end {phone.mobile}")
             
             results.append(phone_result)
