@@ -99,6 +99,7 @@ async def start():
                         }
                     }
                     send_data_to_worker(worker['ip'], "POST", "check_numbers", dumps(send_data))
+                    logger.info(f"sended data to {worker['ip']} worker")
         except:
             pass
         logger.info("end loop")
