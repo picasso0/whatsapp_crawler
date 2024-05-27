@@ -173,6 +173,7 @@ class Worker:
                 logger.info(f"_________________FINDED {phone.mobile}________________________")
             except:
                 pass
+        return phone_result
 
     async def check_whatsapp_phones(self, phones, report):
         failed_numbers = []
