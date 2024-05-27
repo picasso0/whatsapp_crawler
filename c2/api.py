@@ -124,6 +124,7 @@ class WhatsappResult(BaseModel):
 class WhatsappResults(BaseModel):
     results: List[WhatsappResult]
     report: dict
+    failed_numbers: List
 
 @app.post("/initialize/")
 async def initialize(request: Request, db: AsyncIOMotorDatabase = Depends(get_db_instance), authorization: str = Header(None)):
@@ -214,6 +215,7 @@ async def recive_results(request: Request, results: WhatsappResults, db: AsyncIO
     client_ip = request.headers.get("worker_ip")
     worker = await db.worker.find_one({"ip": client_ip})
     result_data = None
+    
     for result in results.results:
         create_at = datetime.now()
         result_data = dict(result)
@@ -228,6 +230,13 @@ async def recive_results(request: Request, results: WhatsappResults, db: AsyncIO
         update_operation = {
             '$push': {'whatsapp': result_data} ,'$set': {"whatsapp_searching": 0}, "$inc": {"whatsapp_searches": 1}}
         db.profile.update_one(filter_query, update_operation)
+    
+    for failed_number in results.failed_numbers:
+        filter_query = {'mobile': failed_number.mobile}
+        update_operation = {
+        '$set': {"whatsapp_searching": 0}}
+        db.profile.update_one(filter_query, update_operation)
+   
     db.worker.update_one(
         {"_id": worker["_id"]},
         {"$set": {"status": 0}, "$push": {'reports': results.report}}

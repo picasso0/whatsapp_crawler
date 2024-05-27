@@ -10,6 +10,7 @@ from selenium.common.exceptions import (
     NoSuchElementException,
     StaleElementReferenceException,
     WebDriverException,
+    TimeoutException
 )
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.chrome.options import Options as ChromeOptions
@@ -129,8 +130,58 @@ class Worker:
                 logger.info(f"Error setting up WebDriver: {e}")
 
         pass
+    
+    async def check_whatsapp_phone(self, driver, phone):
+        phone_result = {'mobile': phone.mobile,
+                        'find': False, 'whatsapp': {}}
+        url = 'https://web.whatsapp.com/send?phone={}'.format(
+            phone.mobile)
+        sent = False
+        driver.set_page_load_timeout(10)
+        try:
+            driver.get(url)
+            logger.warnning(f"driver.get(url) to {url} ")
+        except TimeoutException:
+            try:
+                sleep(3)
+                driver.get(url)
+            except TimeoutException:
+                logger.error(f"driver.get(url) to {url} failed")
+                return 0
+        try:
+            element = WebDriverWait(driver, 5).until(
+                EC.presence_of_element_located((By.XPATH, '//div[@class="x12lqup9 x1o1kx08" and contains(., "Phone number shared via url is invalid")]')))
+        except:
+            try:
+                element = WebDriverWait(driver, 5).until(
+                    EC.presence_of_element_located((By.CSS_SELECTOR, "header._amid")))
+                try:
+                    profile_image_element=""
+                    profile_image_element = element.find_element(
+                        By.CSS_SELECTOR, 'img')
+                    profile_image_element = profile_image_element.get_attribute(
+                        "src")
+                except:
+                    pass
+
+                profile_name = element.find_element(
+                    By.CSS_SELECTOR, 'div._amie')
+                profile_name = profile_name.find_element(
+                    By.CSS_SELECTOR, 'div._amig')
+                profile_name = profile_name.get_attribute("textContent")
+
+                phone_result['find'] = True
+                phone_result['whatsapp'] = {
+                    'name': profile_name,
+                    'image': profile_image_element
+                }
+                find_count = find_count+1
+                logger.info(f"_________________FINDED {phone.mobile}________________________")
+            except:
+                pass
 
     async def check_whatsapp_phones(self, phones, report):
+        failed_numbers = []
         find_count = 0
         start_datetime = datetime.now()
         results = []
@@ -142,48 +193,15 @@ class Worker:
         except:
             return send_data_to_c2("GET", "send_status/", "status=2")
         logger.info(f"logged in to whatsapp")
-        for phone in phones:
+        for index_number, phone in enumerate(phones):
             logger.info(f"start {phone.mobile}")
-            phone_result = {'mobile': phone.mobile,
-                            'find': False, 'whatsapp': {}}
-            url = 'https://web.whatsapp.com/send?phone={}'.format(
-                phone.mobile)
-            sent = False
-            driver.get(url)
-            try:
-                element = WebDriverWait(driver, 5).until(
-                    EC.presence_of_element_located((By.XPATH, '//div[@class="x12lqup9 x1o1kx08" and contains(., "Phone number shared via url is invalid")]')))
-            except:
-                try:
-                    element = WebDriverWait(driver, 5).until(
-                        EC.presence_of_element_located((By.CSS_SELECTOR, "header._amid")))
-                    try:
-                        profile_image_element=""
-                        profile_image_element = element.find_element(
-                            By.CSS_SELECTOR, 'img')
-                        profile_image_element = profile_image_element.get_attribute(
-                            "src")
-                    except:
-                        pass
-
-                    profile_name = element.find_element(
-                        By.CSS_SELECTOR, 'div._amie')
-                    profile_name = profile_name.find_element(
-                        By.CSS_SELECTOR, 'div._amig')
-                    profile_name = profile_name.get_attribute("textContent")
-
-                    phone_result['find'] = True
-                    phone_result['whatsapp'] = {
-                        'name': profile_name,
-                        'image': profile_image_element
-                    }
-                    find_count = find_count+1
-                    logger.info(f"_________________FINDED {phone.mobile}________________________")
-                except:
-                    pass
-
+            phone_result=self.check_whatsapp_phone(driver=driver,phone=phone)
+            if phone_result==0:
+                failed_numbers=phones[index_number:]
             logger.info(f"end {phone.mobile}")
+            
             results.append(phone_result)
+            
         driver.quit()
         end_datetime = datetime.now()
         report = {
@@ -194,6 +212,6 @@ class Worker:
             'end_datetime': str(end_datetime),
             'find_count': find_count
         }
-        results = dumps({"results": results, "report": report})
+        results = dumps({"results": results, "report": report, "failed_numbers": failed_numbers})
         response = send_data_to_c2("POST", "results/", results)
         return response
