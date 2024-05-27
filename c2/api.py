@@ -27,11 +27,16 @@ from auth import (
 )
 import logging
 import sys
-logging.basicConfig(
-    level=logging.DEBUG,
-    format='%(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
-)
-logging.info("start")
+
+# SET LOGGING
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)  
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+ch.setFormatter(formatter)
+logger.addHandler(ch)
+logger.info("start")
 
 async def get_db_instance():
     database = await get_database()
@@ -60,12 +65,12 @@ async def start():
                 raise Exception("Worker is down")
             db.worker.update_one({'ip': worker['ip']}, {"$set": {"status": 0}})
         except Exception as e:
-            logging.warning(f"Worker {worker['ip']} is down: {str(e)}")
+            logger.warning(f"Worker {worker['ip']} is down: {str(e)}")
             db.worker.update_one({'ip': worker['ip']}, {"$set": {"status": 3}})
             
     while(True):
         try:
-            logging.info("start loop")
+            logger.info("start loop")
             workers = db.worker.find({"status": 0})
             profiles_data = []
             async for worker in workers:
@@ -96,7 +101,7 @@ async def start():
                     send_data_to_worker(worker['ip'], "POST", "check_numbers", dumps(send_data))
         except:
             pass
-        logging.info("end loop")
+        logger.info("end loop")
         sleep(1800)
 
 origins = ["*"]
@@ -147,10 +152,10 @@ async def initialize(request: Request, db: AsyncIOMotorDatabase = Depends(get_db
             }
         worker = await db.worker.insert_one(worker_data)
         if not worker.acknowledged:
-            logging.error("cannot create worker ")
+            logger.error("cannot create worker ")
             return JSONResponse(content={"status":False},status_code=500)
         if not user_data:
-            logging.error(f"has not any unused user_data for {client_ip} worker")
+            logger.error(f"has not any unused user_data for {client_ip} worker")
             return JSONResponse(content={"status":False},status_code=500)
         worker_id = worker.inserted_id
         
@@ -159,14 +164,14 @@ async def initialize(request: Request, db: AsyncIOMotorDatabase = Depends(get_db
         if worker.get("app_id")==0:
             user_data = await db.user_data.find_one({"status": 0})
             if not user_data:
-                logging.error(f"has not any unused user_data for {client_ip} worker")
+                logger.error(f"has not any unused user_data for {client_ip} worker")
                 return JSONResponse(content={"status":False},status_code=500)
         else:
             user_data = await db.user_data.find_one({"_id": worker.get("app_id"),"status":1})
             if not user_data:
                 user_data = await db.user_data.find_one({"status": 0})
                 if not user_data:
-                    logging.error(f"has not any unused user_data for {client_ip} worker")
+                    logger.error(f"has not any unused user_data for {client_ip} worker")
                     return JSONResponse(content={"status":False},status_code=500)
         db.worker.update_one(
                         {"_id": worker.get("_id")},
@@ -182,9 +187,9 @@ async def initialize(request: Request, db: AsyncIOMotorDatabase = Depends(get_db
     }
     return JSONResponse(content=return_data,status_code=200)
 
-
-@app.get("/im_ready/")
-async def im_reade(request: Request, db: AsyncIOMotorDatabase = Depends(get_db_instance), authorization: str = Header(None)):
+    
+@app.get("/send_status/")
+async def worker_status(request: Request, db: AsyncIOMotorDatabase = Depends(get_db_instance), status: int = Query(), authorization: str = Header(None)):
     correct_token = str(os.getenv("TOKEN"))
     if authorization is None or authorization != correct_token:
         raise HTTPException(status_code=401, detail="کاربر احراز هویت نشده است")
@@ -193,7 +198,7 @@ async def im_reade(request: Request, db: AsyncIOMotorDatabase = Depends(get_db_i
     worker = await db.worker.find_one({"ip": client_ip})
     db.worker.update_one(
                         {"_id": worker.get("_id")},
-                        {"$set": {"status": 0}}
+                        {"$set": {"status": status}}
                     )
     return JSONResponse(content={"status":True},status_code=200)
     

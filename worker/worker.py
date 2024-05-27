@@ -21,16 +21,22 @@ from json import dumps
 from time import sleep
 import logging
 import sys
-logging.basicConfig(
-    level=logging.DEBUG,
-    format='%(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
-)
-logging.info("start")
+
+# SET LOGGING
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)  
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+ch.setFormatter(formatter)
+logger.addHandler(ch)
+
+logger.info("start")
 
 class Worker:
     
     def initialize(self):
-            logging.info("start initialize")
+            logger.info("start initialize")
             try:
                 extracted_folder = "user_data_extracted"
                 download_directory="downloads";
@@ -39,20 +45,20 @@ class Worker:
                 
                 response = send_data_to_c2("POST", "initialize/", {})
                 if response.status_code==500:
-                    logging.error("error in c2 initialize ( check c2 logs )")
+                    logger.error("error in c2 initialize ( check c2 logs )")
                     return False
                 if response.status_code==401:
-                    logging.error("unauth please check token")
+                    logger.error("unauth please check token")
                     return False
                 response=response.json()
                 user_data_file = download_file(response.get("user_data_path"),download_directory)
                 
                 if user_data_file == False:
-                    logging.error("c2 dont sended any user data")
+                    logger.error("c2 dont sended any user data")
                     return False
                 else:
                     if is_zip_file(user_data_file) == False:
-                        logging.error("c2 dont sended any user data")
+                        logger.error("c2 dont sended any user data")
                         return False
                     
                 extracted_files = extract_zip(user_data_file, extracted_folder)
@@ -60,16 +66,16 @@ class Worker:
                 self.id = response.get("worker_id")
                 self.user_data_path = extracted_folder
             except Exception as e:
-                logging.error("faild  to connection with c2")
+                logger.error("faild  to connection with c2")
                 return False
-            logging.info("end initialize")
+            logger.info("end initialize")
 
     def im_ready(self):
-         send_data_to_c2("GET", "im_ready/", {})
-         logging.info("im ready")
+         send_data_to_c2("GET", "send_status/", "status=0")
+         logger.info("im ready")
          
     def _get_driver(self):
-        logging.info("Setup WebDriver...")
+        logger.info("Setup WebDriver...")
         # Create a UserAgent object
         ua = UserAgent(platforms='pc', os='linux',
                        min_version=120.0, browsers=["chrome"])
@@ -97,30 +103,30 @@ class Worker:
         # For Hiding Browser
 
         try:
-            logging.info("Initializing ChromeDriver...")
+            logger.info("Initializing ChromeDriver...")
             driver = webdriver.Chrome(
                 options=browser_option,
             )
 
-            logging.info("WebDriver Setup Complete")
+            logger.info("WebDriver Setup Complete")
             return driver
         except :
             try:
-                logging.info("Downloading ChromeDriver...")
+                logger.info("Downloading ChromeDriver...")
                 chromedriver_path = ChromeDriverManager().install()
                 chrome_service = ChromeService(
                     executable_path=chromedriver_path)
 
-                logging.info("Initializing ChromeDriver...")
+                logger.info("Initializing ChromeDriver...")
                 driver = webdriver.Chrome(
                     service=chrome_service,
                     options=browser_option,
                 )
 
-                logging.info("WebDriver Setup Complete")
+                logger.info("WebDriver Setup Complete")
                 return driver
             except Exception as e:
-                logging.info(f"Error setting up WebDriver: {e}")
+                logger.info(f"Error setting up WebDriver: {e}")
 
         pass
 
@@ -130,9 +136,14 @@ class Worker:
         results = []
         driver = self._get_driver()
         driver.get('https://web.whatsapp.com')
-        sleep(4)
+        try:
+            element = WebDriverWait(driver, 20).until(
+                    EC.presence_of_element_located((By.CSS_SELECTOR, "div[aria-label='Chat list']")))
+        except:
+            return send_data_to_c2("GET", "send_status/", "status=2")
+        logger.info(f"start {phone.mobile}")
         for phone in phones:
-            logging.info(f"start {phone.mobile}")
+            logger.info(f"start {phone.mobile}")
             phone_result = {'mobile': phone.mobile,
                             'find': False, 'whatsapp': {}}
             url = 'https://web.whatsapp.com/send?phone={}'.format(
@@ -167,11 +178,11 @@ class Worker:
                         'image': profile_image_element
                     }
                     find_count = find_count+1
-                    logging.info(f"_________________FINDED {phone.mobile}________________________")
+                    logger.info(f"_________________FINDED {phone.mobile}________________________")
                 except:
                     pass
 
-            logging.info(f"end {phone.mobile}")
+            logger.info(f"end {phone.mobile}")
             results.append(phone_result)
         driver.quit()
         end_datetime = datetime.now()
