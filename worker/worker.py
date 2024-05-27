@@ -140,7 +140,7 @@ class Worker:
         driver.set_page_load_timeout(10)
         try:
             driver.get(url)
-            logger.warnning(f"driver.get(url) to {url} ")
+            logger.warning(f"driver.get(url) to {url} ")
         except TimeoutException:
             try:
                 sleep(3)
