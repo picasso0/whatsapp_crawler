@@ -142,7 +142,7 @@ class Worker:
                     EC.presence_of_element_located((By.XPATH, "//h1[@aria-label='Chats']")))
         except:
             return send_data_to_c2("GET", "send_status/", "status=2")
-        logger.info(f"start {phone.mobile}")
+        logger.info(f"logged in to whataspp")
         for phone in phones:
             logger.info(f"start {phone.mobile}")
             phone_result = {'mobile': phone.mobile,
