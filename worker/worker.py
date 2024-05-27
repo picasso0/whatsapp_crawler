@@ -195,7 +195,7 @@ class Worker:
         logger.info(f"logged in to whatsapp")
         for index_number, phone in enumerate(phones):
             logger.info(f"start {phone.mobile}")
-            phone_result=self.check_whatsapp_phone(driver=driver,phone=phone)
+            phone_result = await self.check_whatsapp_phone(driver=driver,phone=phone)
             if phone_result==0:
                 failed_numbers=phones[index_number:]
             logger.info(f"end {phone.mobile}")
