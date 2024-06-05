@@ -266,7 +266,6 @@ async def get_records(request: Request, whatsapp_finded = Query() , current_user
     skip = (page - 1) * limit
     records = []
     total_count = await db.profile.count_documents(filter)
-    total_count=total_count/limit
     async for record in db.profile.find(filter).skip(skip).limit(limit):
         record["_id"] = str(record["_id"])
         records.append(record)
