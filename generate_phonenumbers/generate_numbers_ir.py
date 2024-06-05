@@ -35,7 +35,7 @@ async def generate_and_insert_numbers(prefix, start=1000000, end=10000000):
 
 async def main():
 
-    mobile_prefixes = ["54", "55", "56", "57", "58", "59","50", "51", "52", "53"]
+    mobile_prefixes = ["56", "57", "58", "59","50", "51", "52", "53","54", "55",]
     tasks = []
 
     for prefix in mobile_prefixes:
