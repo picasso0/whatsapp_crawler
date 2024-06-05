@@ -256,7 +256,6 @@ async def dashboard(request: Request, current_user: dict = Depends(get_current_u
 
 @app.get("/profiles")
 async def get_records(request: Request, whatsapp_finded = Query() , current_user: dict = Depends(get_current_user), db: AsyncIOMotorDatabase = Depends(get_db_instance), page: int = Query(1, ge=1), limit: int = Query(10, ge=1, le=100)):
-    total_count = await db.profile.count_documents({})
     filter={}
     if whatsapp_finded=='true' or whatsapp_finded=='false':
         if whatsapp_finded=="true":
@@ -266,6 +265,8 @@ async def get_records(request: Request, whatsapp_finded = Query() , current_user
         filter["whatsapp"]= {"$elemMatch": {"find": whatsapp_finded}}
     skip = (page - 1) * limit
     records = []
+    total_count = await db.profile.count_documents(filter)
+    total_count=(total_count/limit)-page
     async for record in db.profile.find(filter).skip(skip).limit(limit):
         record["_id"] = str(record["_id"])
         records.append(record)
