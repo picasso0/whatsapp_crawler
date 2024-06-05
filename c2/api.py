@@ -103,7 +103,7 @@ async def start():
         except:
             pass
         logger.info("end loop")
-        sleep(900)
+        sleep(300)
 
 origins = ["*"]
 
