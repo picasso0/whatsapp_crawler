@@ -145,10 +145,12 @@ class Worker:
         try:
             element = WebDriverWait(driver, 6).until(
                 EC.presence_of_element_located((By.XPATH, '//div[@class="x12lqup9 x1o1kx08" and contains(., "Phone number shared via url is invalid")]')))
+            logger.info("Not Finded")
         except:
             try:
                 element = WebDriverWait(driver, 6).until(
                     EC.presence_of_element_located((By.CSS_SELECTOR, "header._amid")))
+                logger.info("profile finded")
                 try:
                     profile_image_element=""
                     profile_image_element = element.find_element(
@@ -157,12 +159,13 @@ class Worker:
                         "src")
                 except:
                     pass
-
+                logger.info("get texts")
                 profile_name = element.find_element(
                     By.CSS_SELECTOR, 'div._amie')
                 profile_name = profile_name.find_element(
                     By.CSS_SELECTOR, 'div._amig')
                 profile_name = profile_name.get_attribute("textContent")
+                logger.info("name finded")
 
                 phone_result['find'] = True
                 phone_result['whatsapp'] = {
