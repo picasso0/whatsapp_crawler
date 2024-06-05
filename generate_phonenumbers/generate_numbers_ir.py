@@ -17,7 +17,7 @@ async def generate_and_insert_numbers(prefix, collection, start=1000000, end=100
         number_str = f"972{prefix}{i:06d}"
         number = phonenumbers.parse(number_str, "IL")
         print("_____________________")
-        print(number)
+        print(number_str)
         if is_israeli_mobile_number(number):
             formatted_number = phonenumbers.format_number(number, phonenumbers.PhoneNumberFormat.E164)
             existing_number = await collection.find_one({"mobile": formatted_number})
