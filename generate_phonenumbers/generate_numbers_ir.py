@@ -12,30 +12,34 @@ def is_israeli_mobile_number(number):
                 return True
     return False
 
-async def generate_and_insert_numbers(prefix, collection, start=1000000, end=10000000):
-    for i in range(start, end):
-        number_str = f"972{prefix}{i:06d}"
-        number = phonenumbers.parse(number_str, "IL")
-        if is_israeli_mobile_number(number):
-            formatted_number = phonenumbers.format_number(number, phonenumbers.PhoneNumberFormat.E164)
-            existing_number = await collection.find_one({"mobile": number_str})
-            if not existing_number:
-                await collection.insert_one({"mobile": number_str, "whatsapp_searching": 0})
-                print(f"{formatted_number} inserted")
-            else:
-                print(f"{formatted_number} is existed")
-            
+async def generate_and_insert_numbers(prefix, start=1000000, end=10000000):
+    while(True):
+        try:
+            client = motor.motor_asyncio.AsyncIOMotorClient("mongodb://77.238.108.86:27000/log?retryWrites=true&w=majority")
+            db = client["gathering"]
+            collection = db["profile"]
+            for i in range(start, end):
+                number_str = f"972{prefix}{i:06d}"
+                number = phonenumbers.parse(number_str, "IL")
+                if is_israeli_mobile_number(number):
+                    formatted_number = phonenumbers.format_number(number, phonenumbers.PhoneNumberFormat.E164)
+                    existing_number = await collection.find_one({"mobile": number_str})
+                    if not existing_number:
+                        await collection.insert_one({"mobile": number_str, "whatsapp_searching": 0})
+                        print(f"{formatted_number} inserted")
+                    else:
+                        print(f"{formatted_number} is existed")
+        except:
+            pass
+                
 
 async def main():
-    client = motor.motor_asyncio.AsyncIOMotorClient("mongodb://77.238.108.86:27000/log?retryWrites=true&w=majority")
-    db = client["gathering"]
-    collection = db["profile"]
 
     mobile_prefixes = ["54", "55", "56", "57", "58", "59","50", "51", "52", "53"]
     tasks = []
 
     for prefix in mobile_prefixes:
-        task = asyncio.create_task(generate_and_insert_numbers(prefix, collection))
+        task = asyncio.create_task(generate_and_insert_numbers(prefix))
         tasks.append(task)
 
     await asyncio.gather(*tasks)
