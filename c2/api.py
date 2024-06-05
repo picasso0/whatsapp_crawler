@@ -83,7 +83,7 @@ async def start():
                         {"id": str(profile['_id']), 'mobile': profile['mobile']})
                     db.profile.update_one({'mobile': profile['mobile']},{"$set": {"whatsapp_searching": 1}})
                     i = i+1
-                if len(profiles_data) > 1:
+                if len(profiles_data) >= 1:
                     db.worker.update_one(
                         {"_id": worker["_id"]},
                         {"$set": {"status": 1}, "$inc": {'reports_count': 1}}
