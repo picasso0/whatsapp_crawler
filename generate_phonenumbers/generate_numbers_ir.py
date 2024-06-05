@@ -35,7 +35,7 @@ async def main():
     db = client["gathering"]
     collection = db["profile"]
 
-    mobile_prefixes = ["050", "051", "052", "053", "054", "055", "056", "057", "058", "059"]
+    mobile_prefixes = ["054", "055", "056", "057", "058", "059","050", "051", "052", "053"]
     tasks = []
 
     for prefix in mobile_prefixes:
