@@ -42,7 +42,7 @@ async def main():
         # task = asyncio.create_task(generate_and_insert_numbers(prefix, collection))
         # tasks.append(task)
         breakpoint()
-        generate_and_insert_numbers(prefix, collection)
+        await generate_and_insert_numbers(prefix, collection)
 
     await asyncio.gather(*tasks)
 
