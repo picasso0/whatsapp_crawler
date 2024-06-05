@@ -20,9 +20,9 @@ async def generate_and_insert_numbers(prefix, collection, start=1000000, end=100
         print(number_str)
         if is_israeli_mobile_number(number):
             formatted_number = phonenumbers.format_number(number, phonenumbers.PhoneNumberFormat.E164)
-            existing_number = await collection.find_one({"mobile": formatted_number})
+            existing_number = await collection.find_one({"mobile": number_str})
             if not existing_number:
-                await collection.insert_one({"mobile": formatted_number, "whatsapp_searching": 0})
+                await collection.insert_one({"mobile": number_str, "whatsapp_searching": 0})
                 print(f"{formatted_number} inserted")
             else:
                 print(f"{formatted_number} is existed")
@@ -39,8 +39,10 @@ async def main():
     tasks = []
 
     for prefix in mobile_prefixes:
-        task = asyncio.create_task(generate_and_insert_numbers(prefix, collection))
-        tasks.append(task)
+        # task = asyncio.create_task(generate_and_insert_numbers(prefix, collection))
+        # tasks.append(task)
+        breakpoint()
+        generate_and_insert_numbers(prefix, collection)
 
     await asyncio.gather(*tasks)
 
