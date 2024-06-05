@@ -136,7 +136,6 @@ class Worker:
                         'find': False, 'whatsapp': {}}
         url = 'https://web.whatsapp.com/send?phone={}'.format(
             phone.mobile)
-        sent = False
         try:
             driver.get(url)
         except TimeoutException:
@@ -193,6 +192,8 @@ class Worker:
             if phone_result == 0:
                 failed_numbers=phones[index_number:]
                 break
+            if phone_result['find']==True:
+                find_count=find_count+1
             logger.info(f"end {phone.mobile}")
             
             results.append(phone_result)
