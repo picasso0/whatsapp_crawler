@@ -143,11 +143,11 @@ class Worker:
             logger.error(f"driver.get(url) to {url} failed")
             return 0
         try:
-            element = WebDriverWait(driver, 5).until(
+            element = WebDriverWait(driver, 6).until(
                 EC.presence_of_element_located((By.XPATH, '//div[@class="x12lqup9 x1o1kx08" and contains(., "Phone number shared via url is invalid")]')))
         except:
             try:
-                element = WebDriverWait(driver, 5).until(
+                element = WebDriverWait(driver, 6).until(
                     EC.presence_of_element_located((By.CSS_SELECTOR, "header._amid")))
                 try:
                     profile_image_element=""
