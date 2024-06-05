@@ -12,7 +12,7 @@ def is_israeli_mobile_number(number):
                 return True
     return False
 
-async def generate_and_insert_numbers(prefix, collection, start=10000000, end=100000000):
+async def generate_and_insert_numbers(prefix, collection, start=1000000, end=10000000):
     for i in range(start, end):
         number_str = f"972{prefix}{i:06d}"
         number = phonenumbers.parse(number_str, "IL")
