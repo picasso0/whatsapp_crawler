@@ -20,6 +20,7 @@ async def generate_and_insert_numbers(prefix, start=1000000, end=10000000):
             collection = db["profile"]
             for i in range(start, end):
                 number_str = f"972{prefix}{i:06d}"
+                print(number_str)
                 number = phonenumbers.parse(number_str, "IL")
                 if is_israeli_mobile_number(number):
                     formatted_number = phonenumbers.format_number(number, phonenumbers.PhoneNumberFormat.E164)
@@ -29,8 +30,10 @@ async def generate_and_insert_numbers(prefix, start=1000000, end=10000000):
                         print(f"{formatted_number} inserted")
                     else:
                         print(f"{formatted_number} is existed")
+            client.close()
         except:
             pass
+        
                 
 
 async def main():
