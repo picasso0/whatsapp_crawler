@@ -22,14 +22,14 @@ async def generate_and_insert_numbers(prefix, start=1000000, end=10000000):
                 number_str = f"972{prefix}{i:06d}"
                 print(number_str)
                 number = phonenumbers.parse(number_str, "IL")
-                if is_israeli_mobile_number(number):
-                    formatted_number = phonenumbers.format_number(number, phonenumbers.PhoneNumberFormat.E164)
-                    existing_number = await collection.find_one({"mobile": number_str})
-                    if not existing_number:
-                        await collection.insert_one({"mobile": number_str, "whatsapp_searching": 0})
-                        print(f"{formatted_number} inserted")
-                    else:
-                        print(f"{formatted_number} is existed")
+                # if is_israeli_mobile_number(number):
+                #     formatted_number = phonenumbers.format_number(number, phonenumbers.PhoneNumberFormat.E164)
+                existing_number = await collection.find_one({"mobile": number_str})
+                if not existing_number:
+                    await collection.insert_one({"mobile": number_str, "whatsapp_searching": 0})
+                    print(f"{number_str} inserted")
+                else:
+                    print(f"{number_str} is existed")
             client.close()
         except:
             pass
