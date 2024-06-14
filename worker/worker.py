@@ -190,7 +190,8 @@ class Worker:
             logger.info(f"start {phone.mobile}")
             phone_result = await self.check_whatsapp_phone(driver=driver,phone=phone)
             if phone_result == 0:
-                failed_numbers=phones[index_number:]
+                for failed_phone in phones[index_number:]:
+                    failed_numbers.append(failed_phone.dict())
                 break
             if phone_result['find']==True:
                 find_count=find_count+1
@@ -208,6 +209,8 @@ class Worker:
             'end_datetime': str(end_datetime),
             'find_count': find_count
         }
+        if len(failed_numbers) :
+            logger.info({"results": results, "report": report, "failed_numbers": failed_numbers})
         results = dumps({"results": results, "report": report, "failed_numbers": failed_numbers})
         response = send_data_to_c2("POST", "results/", results)
         return response
