@@ -232,7 +232,10 @@ async def recive_results(request: Request, results: WhatsappResults, db: AsyncIO
         db.profile.update_one(filter_query, update_operation)
     
     for failed_number in results.failed_numbers:
-        filter_query = {'mobile': failed_number.mobile}
+        try:
+            filter_query = {'mobile': failed_number.mobile}
+        except:
+            filter_query = {'mobile': failed_number['mobile']}
         update_operation = {
         '$set': {"whatsapp_searching": 0}}
         db.profile.update_one(filter_query, update_operation)
