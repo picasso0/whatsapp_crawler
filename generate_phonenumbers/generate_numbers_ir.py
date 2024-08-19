@@ -2,6 +2,7 @@ import phonenumbers
 import motor.motor_asyncio
 import asyncio
 from phonenumbers import PhoneNumberType
+from time import sleep
 
 def is_israeli_mobile_number(number):
     if phonenumbers.is_valid_number(number):
@@ -20,7 +21,6 @@ async def generate_and_insert_numbers(prefix, start=1000000, end=10000000):
             collection = db["profile"]
             for i in range(start, end):
                 number_str = f"972{prefix}{i:06d}"
-                print(number_str)
                 number = phonenumbers.parse(number_str, "IL")
                 # if is_israeli_mobile_number(number):
                 #     formatted_number = phonenumbers.format_number(number, phonenumbers.PhoneNumberFormat.E164)
@@ -28,8 +28,7 @@ async def generate_and_insert_numbers(prefix, start=1000000, end=10000000):
                 if not existing_number:
                     await collection.insert_one({"mobile": number_str, "whatsapp_searching": 0})
                     print(f"{number_str} inserted")
-                else:
-                    print(f"{number_str} is existed")
+                sleep(0.1)
             client.close()
         except:
             pass
