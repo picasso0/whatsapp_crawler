@@ -16,7 +16,7 @@ RUN apt-get update
 
 # Set up Chromedriver Environment variables and install Chrome
 ENV CHROMEDRIVER_VERSION 114.0.5735.90
-ENV CHROME_VERSION 114.0.5735.90-1
+ENV CHROME_VERSION 116.0.5845.96-1
 
 RUN wget --no-verbose -O /tmp/chrome.deb https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb \
   && apt-get install -y /tmp/chrome.deb \
