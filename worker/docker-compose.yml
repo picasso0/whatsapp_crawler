@@ -11,5 +11,5 @@ services:
       - ./:/app
     environment:
       - TOKEN=test
-      - C2_URL=http://181.214.140.244:8888
-      - WORKER_IP=181.214.140.244
+      - C2_URL=http://181.214.140.145:8888
+      - WORKER_IP=181.214.140.145
