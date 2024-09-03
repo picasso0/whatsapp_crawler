@@ -74,7 +74,7 @@ async def start():
             workers = db.worker.find({"status": 0})
             profiles_data = []
             async for worker in workers:
-                profiles = db.profile.find({"whatsapp_searching": 0}).sort([("whatsapp_searches", 1), ("_id", -1)]).limit(200)
+                profiles = db.profile.find({"whatsapp_searching": 0}).sort([("whatsapp_searches", 1), ("_id", -1)]).limit(50)
                 i = 0
                 async for profile in profiles:
                     if i == 0:
