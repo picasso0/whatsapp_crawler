@@ -28,7 +28,9 @@ async def generate_and_insert_numbers(prefix, start=1000000, end=10000000):
                 if not existing_number:
                     await collection.insert_one({"mobile": number_str, "whatsapp_searching": 0})
                     print(f"{number_str} inserted")
-                sleep(0.1)
+                else:
+                    print(f"{number_str} existed")
+                sleep(0.2)
             client.close()
         except:
             pass
@@ -39,7 +41,7 @@ async def main():
 
     mobile_prefixes = ["56", "57", "58", "59","50", "51", "52", "53","54", "55",]
     tasks = []
-
+    
     for prefix in mobile_prefixes:
         task = asyncio.create_task(generate_and_insert_numbers(prefix))
         tasks.append(task)
