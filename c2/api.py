@@ -216,6 +216,10 @@ async def recive_results(request: Request, results: WhatsappResults, db: AsyncIO
     worker = await db.worker.find_one({"ip": client_ip})
     result_data = None
     
+    db.worker.update_one(
+        {"_id": worker["_id"]},
+        {"$set": {"status": 0}, "$push": {'reports': results.report}}
+    )
     for result in results.results:
         create_at = datetime.now()
         result_data = dict(result)
@@ -237,10 +241,6 @@ async def recive_results(request: Request, results: WhatsappResults, db: AsyncIO
         '$set': {"whatsapp_searching": 0}}
         db.profile.update_one(filter_query, update_operation)
    
-    db.worker.update_one(
-        {"_id": worker["_id"]},
-        {"$set": {"status": 0}, "$push": {'reports': results.report}}
-    )
     return {"status": True}
 
 
