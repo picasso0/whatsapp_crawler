@@ -132,10 +132,10 @@ class Worker:
         pass
     
     async def check_whatsapp_phone(self, driver, phone):
-        phone_result = {'mobile': phone['mobile'],
+        phone_result = {'mobile': phone.mobile,
                         'find': False, 'whatsapp': {}}
         url = 'https://web.whatsapp.com/send?phone={}'.format(
-            phone['mobile'])
+            phone.mobile)
         try:
             driver.get(url)
         except TimeoutException:
@@ -199,7 +199,7 @@ class Worker:
                     'last_seen': last_seen,
                 }
                 find_count = find_count+1
-                logger.info(f"_________________FINDED {phone['mobile']}________________________")
+                logger.info(f"_________________FINDED {phone.mobile}________________________")
             except:
                 pass
         return phone_result
