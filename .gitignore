@@ -5,3 +5,6 @@ c2/__pycache__/
 worker/user_data_extracted/
 worker/downloads/
 *.DS_Store
+api_offline.py
+worker_offline.py
+userdata

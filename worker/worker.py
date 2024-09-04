@@ -79,7 +79,7 @@ class Worker:
         logger.info("Setup WebDriver...")
         # Create a UserAgent object
         ua = UserAgent(platforms='pc', os='linux',
-                       min_version=120.0, browsers=["chrome"])
+                       min_version=128.0, browsers=["chrome"])
 
         # Get the user agent string for the latest version of Chrome
         chrome_user_agent = ua.random
@@ -132,10 +132,10 @@ class Worker:
         pass
     
     async def check_whatsapp_phone(self, driver, phone):
-        phone_result = {'mobile': phone.mobile,
+        phone_result = {'mobile': phone['mobile'],
                         'find': False, 'whatsapp': {}}
         url = 'https://web.whatsapp.com/send?phone={}'.format(
-            phone.mobile)
+            phone['mobile'])
         try:
             driver.get(url)
         except TimeoutException:
@@ -145,34 +145,65 @@ class Worker:
             element = WebDriverWait(driver, 8).until(
                 EC.presence_of_element_located((By.XPATH, '//div[@class="x12lqup9 x1o1kx08" and contains(., "Phone number shared via url is invalid")]')))
         except:
+            sleep(5)
+            try:
+                last_seen = driver.find_element(By.CSS_SELECTOR, 'div.x78zum5.x1cy8zhl.xisnujt.x1nxh6w3.xcgms0a.x16cd2qt').text
+            except:
+                last_seen=""
             try:
                 element = WebDriverWait(driver, 12).until(
-                    EC.presence_of_element_located((By.CSS_SELECTOR, "header._amid")))
+                    EC.presence_of_element_located((By.CSS_SELECTOR, "header._amid._aqbz")))
                 try:
-                    profile_image_element=""
-                    profile_image_element = element.find_element(
-                        By.CSS_SELECTOR, 'img')
-                    profile_image_element = profile_image_element.get_attribute(
-                        "src")
+                    element.click()
                 except:
-                    pass
-                profile_name = element.find_element(
-                    By.CSS_SELECTOR, 'div._amie')
-                profile_name = profile_name.find_element(
-                    By.CSS_SELECTOR, 'div._amig')
-                profile_name = profile_name.get_attribute("textContent")
-
+                    element = WebDriverWait(driver, 12).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.x1c4vz4f.x2lah0s.xdl72j9.x1i4ejaq.x1y332i5"))).click()
+                sleep(1)
+                element = WebDriverWait(driver, 12).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div._aigv._aig-._aohg")))
+                
+                try:
+                    profile_image = element.find_element(By.CSS_SELECTOR, 'img').get_attribute("src")
+                except:
+                    profile_image=""
+                
+                try:
+                    profile_name = element.find_element(By.CSS_SELECTOR, 'div._aou8._aj_h').text
+                except:
+                    profile_name=""
+                
+                try:
+                    category = element.find_element(By.CSS_SELECTOR, 'div.x1f6kntn.x1anpt5t.x37zpob.xyorhqc').text
+                except:
+                    category=""
+                    
+                try:
+                    business = element.find_element(By.CSS_SELECTOR, 'div.x13mwh8y.x1q3qbx4.x1wg5k15.xajqne3.x1n2onr6.x1c4vz4f.x2lah0s.xdl72j9.xyorhqc.x13x2ugz.x178xt8z.x13fuv20.x1sdoubt.x1f6kntn').text
+                    business=True
+                except:
+                    business=""
+                
+                try:
+                    bio_text=[]
+                    bio_contents = element.find_elements(By.CSS_SELECTOR, 'div.xqui205')
+                    for bio_content in bio_contents : bio_text.append(bio_content.text)
+                    bio_text = '\n'.join(bio_text)
+                except:
+                    bio_text=""                
+                
                 phone_result['find'] = True
                 phone_result['whatsapp'] = {
-                    'name': profile_name,
-                    'image': profile_image_element
+                    'profile_name': profile_name,
+                    'image': profile_image,
+                    'category': category,
+                    'business': business,
+                    'bio': bio_text,
+                    'last_seen': last_seen,
                 }
                 find_count = find_count+1
-                logger.info(f"_________________FINDED {phone.mobile}________________________")
+                logger.info(f"_________________FINDED {phone['mobile']}________________________")
             except:
                 pass
         return phone_result
-
+    
     async def check_whatsapp_phones(self, phones, report):
         failed_numbers = []
         find_count = 0
