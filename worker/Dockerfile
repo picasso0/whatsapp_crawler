@@ -26,5 +26,5 @@ RUN pip install -r requirements.txt
 RUN google-chrome --version
 
 # Start the application
-# CMD ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000"]
-CMD ["tail","-f","/dev/null"]
+CMD ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000"]
+# CMD ["tail","-f","/dev/null"]
