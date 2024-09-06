@@ -49,7 +49,6 @@ async def start():
     db = await get_db_instance()
     async for worker in db.worker.find({}):
         try:
-            
             response = send_data_to_worker(worker['ip'], "GET", "check_alive", "")
             if response.status_code != 200:
                 raise Exception("Worker is down")
@@ -60,11 +59,10 @@ async def start():
             
     while(True):
         try:
-            logger.info("start loop")
             workers = db.worker.find({"status": 0})
             profiles_data = []
             async for worker in workers:
-                profiles = db.profile.find({"whatsapp_searching": 0}).sort([("whatsapp_searches", 1), ("_id", -1)]).limit(50)
+                profiles = db.profile.find({"whatsapp_searching": 0}).sort([("whatsapp_searches", 1), ("_id", 1)]).limit(100)
                 i = 0
                 async for profile in profiles:
                     if i == 0:
@@ -92,7 +90,6 @@ async def start():
                     logger.info(f"sended data to {worker['ip']} worker")
         except:
             pass
-        logger.info("end loop")
         sleep(30)
 
 origins = ["*"]
@@ -211,6 +208,7 @@ async def recive_results(request: Request, results: WhatsappResults, db: AsyncIO
         {"$set": {"status": 0}, "$push": {'reports': results.report}}
     )
     for result in results.results:
+        logger.info(f"resulst : {result}")
         create_at = datetime.now()
         result_data = dict(result)
         result_data['worker_id'] = str(worker.get("_id"))
@@ -226,6 +224,7 @@ async def recive_results(request: Request, results: WhatsappResults, db: AsyncIO
         db.profile.update_one(filter_query, update_operation)
     
     for failed_number in results.failed_numbers:
+        logger.info(f"failed_number : {failed_number}")
         filter_query = {'mobile': failed_number.mobile}
         update_operation = {
         '$set': {"whatsapp_searching": 0}}
