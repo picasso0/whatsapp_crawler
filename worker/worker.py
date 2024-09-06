@@ -145,7 +145,7 @@ class Worker:
             element = WebDriverWait(driver, 8).until(
                 EC.presence_of_element_located((By.XPATH, '//div[@class="x12lqup9 x1o1kx08" and contains(., "Phone number shared via url is invalid")]')))
         except:
-            sleep(5)
+            sleep(7)
             try:
                 last_seen = driver.find_element(By.CSS_SELECTOR, 'div.x78zum5.x1cy8zhl.xisnujt.x1nxh6w3.xcgms0a.x16cd2qt').text
             except:
