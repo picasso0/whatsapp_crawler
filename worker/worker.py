@@ -189,7 +189,7 @@ class Worker:
                 except:
                     bio_text=""                
                 
-                phone_result['find'] = True
+                phone_result['has_whatsapp'] = True
                 phone_result['whatsapp'] = {
                     'profile_name': profile_name,
                     'image': profile_image,

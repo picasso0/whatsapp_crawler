@@ -62,7 +62,7 @@ async def start():
             workers = db.worker.find({"status": 0})
             profiles_data = []
             async for worker in workers:
-                profiles = db.profile.find({"whatsapp_searching": 0}).sort([("whatsapp_searches", 1), ("_id", 1)]).limit(100)
+                profiles = db.profile.find({"whatsapp_searching": 0,"$or": [{"find": False},{"find": {"$exists": False}}]}).sort([("whatsapp_searches", 1), ("_id", 1)]).limit(100)
                 i = 0
                 async for profile in profiles:
                     if i == 0:
@@ -211,16 +211,18 @@ async def recive_results(request: Request, results: WhatsappResults, db: AsyncIO
         logger.info(f"resulst : {result}")
         create_at = datetime.now()
         result_data = dict(result)
-        result_data['worker_id'] = str(worker.get("_id"))
-        result_data['create_at'] = create_at
-        result_data['report_id'] = results.report['id']
+        result_data['whatsapp']['worker_id'] = str("1")
+        result_data['whatsapp']['create_at'] = create_at
+        result_data['whatsapp']['report_id'] = results.report['id']
+        result_data['whatsapp_searching'] = 0
+        
         profile = await db.profile.find_one({"mobile": result.mobile})
         if not profile:
             db.profile.insert_one(
                 {'mobile': result.mobile, "whatsapp_searches": 0})
         filter_query = {'mobile': result.mobile}
         update_operation = {
-            '$push': {'whatsapp': result_data} ,'$set': {"whatsapp_searching": 0}, "$inc": {"whatsapp_searches": 1}}
+            '$set': result_data , "$inc": {"whatsapp_searches": 1}}
         db.profile.update_one(filter_query, update_operation)
     
     for failed_number in results.failed_numbers:
